@@ -1,0 +1,52 @@
+* {
+	border: 			solid red 1px;
+}
+
+html, body {
+	margin: 			0;
+	padding: 			0;
+}
+
+body {
+	display: 			flex;
+	justify-content: 	center;
+	align-items: 		center;
+	height: 			100vh;
+}
+
+table, th, td {
+	border-collapse: 	collapse;
+}
+
+td {
+	width: 				60px;
+	height: 			60px;
+	background-color: white;
+	padding:			0;
+	text-align: 		center;
+}
+
+.dragging {
+	opacity: 			0.5;
+	cursor: 			pointer;
+	width: 				55%;
+	height: 			55%;
+}
+
+.start-node-img {
+	transition: 		500ms;
+	max-width: 			75%;
+	max-height: 		75%;
+	cursor: 			move;
+}
+
+.goal-node-img {
+	transition: 		500ms;
+	max-width: 			75%;
+	max-height: 		75%;
+	cursor: 			move;
+}
+
+
+
+
