@@ -19,8 +19,8 @@ table, th, td {
 }
 
 td {
-	width: 				60px;
-	height: 			60px;
+	width: 				30px;
+	height: 			30px;
 	background-color: white;
 	padding:			0;
 	text-align: 		center;
@@ -49,8 +49,19 @@ td {
 
 .closed {
 	background-color: red;
+	transition: 1s;
 }
 
 .opened {
 	background-color: rgb(252, 172, 229);
+	transition: 500ms;
+}
+
+.current {
+	outline: grey solid 5px;
+	transition: 500ms;
+}
+
+.wall {
+	background-color: rgb(44, 44, 44);
 }

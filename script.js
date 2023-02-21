@@ -24,19 +24,22 @@ let goal_node_cords			= { x: 5,	y: 5 };
 
 let isStartNodeBeingDragged = false;
 let isGoalNodeBeingDragged	= false;
+let isPointerDown = false;
+
 
 start_node_img.addEventListener("dragstart", 	() => {	start_node_img.classList.add("dragging");		isStartNodeBeingDragged = true; })
 
-start_node_img.addEventListener("dragend", 		() => {	start_node_img.classList.remove("dragging"); 	isStartNodeBeingDragged	= false; })
+start_node_img.addEventListener("dragend", 		() => {	start_node_img.classList.remove("dragging"); 	isStartNodeBeingDragged	= false; isPointerDown = false; })
 
 goal_node_img.addEventListener("dragstart", 	() => {goal_node_img.classList.add("dragging"); 		isGoalNodeBeingDragged	= true; })
 
-goal_node_img.addEventListener("dragend", 		() => {goal_node_img.classList.remove("dragging"); 		isGoalNodeBeingDragged	= false; })
+goal_node_img.addEventListener("dragend", 		() => {goal_node_img.classList.remove("dragging"); 		isGoalNodeBeingDragged	= false; isPointerDown = false; })
 
+// Handling of creating the Grid
 
 let table_rows;
-let amount_of_rows 	= 5;
-let amount_of_cells = 5;
+let amount_of_rows 	= 15;
+let amount_of_cells = 15;
 
 const createGrid = () => {
 
@@ -59,7 +62,7 @@ const createGrid = () => {
 
 								new_cell.dataset.x		= cell_i;
 								new_cell.dataset.y		= row_i;
-								new_cell.dataset.state 	= "unopened" // There are 3 states. "unopened", "opened", and "closed"
+								new_cell.dataset.state 	= "unopened" // There are 4 states. "unopened", "opened", "closed", and "wall".
 								new_cell.dataset.gcost	= (Math.abs(cell_i - start_node_cords.x) 	+ 	Math.abs(row_i - start_node_cords.y));
 								new_cell.dataset.hcost	= (Math.abs(cell_i - goal_node_cords.x) 	+ 	Math.abs(row_i - goal_node_cords.y));
 								new_cell.dataset.fcost	= (parseInt(new_cell.dataset.gcost) 		+ 	parseInt(new_cell.dataset.hcost));
@@ -82,7 +85,56 @@ createGrid();
 
 
 
+
+
+
+
+
+// Handling of creating and removing Walls 
+
+let createOrRemoveWalls = null;
+
+table.addEventListener("pointerdown", (e) => { 
+	isPointerDown = true; 
+		if(e.target.dataset.state === 'unopened') 	createOrRemoveWalls = "create";
+		else if (e.target.dataset.state === 'wall') createOrRemoveWalls = "remove";
+	createAndRemoveWalls(e);
+	
+})
+
+table.addEventListener("pointerup", (e) => { 
+	isPointerDown = false; 
+})
+
+table.addEventListener("pointerover", (e) => {
+	createAndRemoveWalls(e); 
+})
+
+		const createAndRemoveWalls = (e) => {
+
+			if(isPointerDown && e.target.tagName === "TD" && e.target.hasChildNodes() === false && isStartNodeBeingDragged === false && isGoalNodeBeingDragged === false){
+				
+				// Create a Wall
+				if(e.target.classList.contains("wall") === false && createOrRemoveWalls === "create") 	{ e.target.classList.add('wall'); e.target.dataset.state = "wall"; }
+
+				// Remove a Wall
+				if(e.target.classList.contains("wall") === true && createOrRemoveWalls === "remove")	{ e.target.classList.remove('wall'); e.target.dataset.state = "unopened"; }
+
+			}
+		}
+
+
+
+
+
+
+
+
+
+// Handling of updating the Cell's Formula Data when Start and/or Goal Nodes are moved
+
 const cells = document.querySelectorAll("td")
+
 
 cells.forEach((cell) => {
 
@@ -90,9 +142,9 @@ cells.forEach((cell) => {
 
 		e.preventDefault();
 	
-		if(isStartNodeBeingDragged == true && cell.contains(goal_node_img) == false) cell.appendChild(start_node_img)
+		if(isStartNodeBeingDragged == true && cell.contains(goal_node_img) == false && e.target.dataset.state !== "wall") cell.appendChild(start_node_img)
 
-			else if (isGoalNodeBeingDragged == true && cell.contains(start_node_img) == false) cell.appendChild(goal_node_img)
+			else if (isGoalNodeBeingDragged == true && cell.contains(start_node_img) == false && e.target.dataset.state !== "wall") cell.appendChild(goal_node_img)
 	
 		onNodeChange(e);
 		
@@ -143,19 +195,23 @@ cells.forEach((cell) => {
 
 						current_start_node = start_node_img.parentElement; 
 						current_goal_node = goal_node_img.parentElement;
-							// console.log(current_start_node.id, current_goal_node.id)
+							
 				}
 
 
 
 
 visualize_button.addEventListener("click", (e) => {
-	console.log('button has been clicked')
 	iterate();
 })
 
 
 
+
+
+
+
+// Handling of A* Iteration
 
 let openList 	= [];
 let closedList 	= [];
@@ -174,21 +230,21 @@ let neighbors = new Map();
 
 const iterate = () => {
 
-	if(isPathFound === false) {
+	if (isPathFound === false) {
 
-		setStartingCurrent();
 
-		updateCurrent();
+			setStartingCurrent();
 
-		getNeighbors();
+			updateCurrent();
 
-		openNeighbors();
+			getNeighbors();
 
-		examineOpenedNeighbors();
+			openNeighbors();
 
-		// console.log(openList, closedList)
+			examineOpenedNeighbors();
 
-		console.log(current)
+			console.log(openList)
+	
 
 	} else console.log('Path has been found!')
 }
@@ -217,6 +273,9 @@ const iterate = () => {
 
 		const updateCurrent = () => {
 
+				// If the previous/old current contains the class 'current' then remove it.
+				if(current.classList.contains("current")) { current.classList.remove("current")}
+
 			// Set the current to the node with the lowest F cost
 			current = nodeWithLowestFCost;
 
@@ -229,13 +288,16 @@ const iterate = () => {
 			// Add the closed class to it
 			current.classList.add("closed")
 
+			// Add the current class to it
+			current.classList.add("current")
+
 				// And also remove the opened class if it contains it
 				if(current.classList.contains("opened")) { current.classList.remove("opened")}
 
 			// Set the dataset state to be "closed"
 			current.dataset.state = "closed"
 
-				// If the current is the target, then return
+				// If the current is the target, then set isPathFound to true to stop iteratioins
 				if(current === goal_node_img.parentElement) { isPathFound = true; }
 
 		}
