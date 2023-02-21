@@ -1,8 +1,10 @@
 
 const tbody 				= document.querySelector("tbody");
 const table 				= document.querySelector("table");
+const visualize_button		= document.querySelector("#visualize-button");
 const start_node_img 		= document.createElement("img");
 const goal_node_img			= document.createElement("img");
+
 
 		start_node_img.id			= "start-node"
 		start_node_img.src			= "circle.png";
@@ -57,6 +59,7 @@ const createGrid = () => {
 
 								new_cell.dataset.x		= cell_i;
 								new_cell.dataset.y		= row_i;
+								new_cell.dataset.state 	= "unopened" // There are 3 states. "unopened", "opened", and "closed"
 								new_cell.dataset.gcost	= (Math.abs(cell_i - start_node_cords.x) 	+ 	Math.abs(row_i - start_node_cords.y));
 								new_cell.dataset.hcost	= (Math.abs(cell_i - goal_node_cords.x) 	+ 	Math.abs(row_i - goal_node_cords.y));
 								new_cell.dataset.fcost	= (parseInt(new_cell.dataset.gcost) 		+ 	parseInt(new_cell.dataset.hcost));
@@ -106,7 +109,7 @@ cells.forEach((cell) => {
 				
 				updateCellData(e)
 
-				updateStartGoalNodes(e);
+				updateStartAndGoalNodes(e);
 
 			}
 		} 
@@ -126,22 +129,166 @@ cells.forEach((cell) => {
 
 						cells.forEach((cell) => {
 
-							x = parseInt(cell.dataset.x)
-							y = parseInt(cell.dataset.y)
-
-							console.log("test")
+							let x = parseInt(cell.dataset.x);
+							let y = parseInt(cell.dataset.y);
 
 							cell.dataset.gcost = (Math.abs(x - start_node_cords.x) 	+ 	Math.abs(y - start_node_cords.y));
 							cell.dataset.hcost = (Math.abs(x - goal_node_cords.x) 	+ 	Math.abs(y - goal_node_cords.y));
-							cell.dataset.fcost = parseInt(cell.dataset.gcost) + parseInt(cell.dataset.hcost);
+							cell.dataset.fcost = parseInt(cell.dataset.gcost) 		+ parseInt(cell.dataset.hcost);
 						})
 				}
 
 
-
-				const updateStartGoalNodes = (e) => {
+				const updateStartAndGoalNodes = (e) => {
 
 						current_start_node = start_node_img.parentElement; 
 						current_goal_node = goal_node_img.parentElement;
 							// console.log(current_start_node.id, current_goal_node.id)
 				}
+
+
+
+
+visualize_button.addEventListener("click", (e) => {
+	console.log('button has been clicked')
+	iterate();
+})
+
+
+
+
+let openList 	= [];
+let closedList 	= [];
+let current 	= null;
+let isPathFound = false;
+
+let lowestFCost;
+let nodeWithLowestFCost;
+
+let neighbors = new Map();
+	neighbors.set('north', null);
+	neighbors.set('east', null);
+	neighbors.set('south', null);
+	neighbors.set('west', null);
+
+
+const iterate = () => {
+
+	if(isPathFound === false) {
+
+		setStartingCurrent();
+
+		updateCurrent();
+
+		getNeighbors();
+
+		openNeighbors();
+
+		examineOpenedNeighbors();
+
+		// console.log(openList, closedList)
+
+		console.log(current)
+
+	} else console.log('Path has been found!')
+}
+
+		const setStartingCurrent = () => {
+
+			// Setting the start node for 'current'
+			if(current === null) { 
+
+				// Set the initial lowest f-cost
+				lowestFCost = parseInt(start_node_img.parentElement.dataset.fcost)
+
+				// Set the intial lowest f-cost node
+				nodeWithLowestFCost = start_node_img.parentElement;
+
+				// Set the current to the node with the start node img
+				current = nodeWithLowestFCost; 
+
+				// Add it to the open list
+				openList.push(current);
+
+				// Set the dataset state to be "opened"
+				current.dataset.state = "opened"
+			}
+		}
+
+		const updateCurrent = () => {
+
+			// Set the current to the node with the lowest F cost
+			current = nodeWithLowestFCost;
+
+			// Remove it from the open list
+			openList.pop(current)
+
+			// Add it to the closed list
+			closedList.push(current)
+			
+			// Add the closed class to it
+			current.classList.add("closed")
+
+				// And also remove the opened class if it contains it
+				if(current.classList.contains("opened")) { current.classList.remove("opened")}
+
+			// Set the dataset state to be "closed"
+			current.dataset.state = "closed"
+
+				// If the current is the target, then return
+				if(current === goal_node_img.parentElement) { isPathFound = true; }
+
+		}
+
+		const getNeighbors = () => {
+
+			let x = parseInt(current.dataset.x);	let y = parseInt(current.dataset.y);
+
+			north 	= "#row" + (y - 1) + "cell" + x;
+			east 	= "#row" + y + "cell" + (x + 1);
+			south	= "#row" + (y + 1) + "cell" + x;
+			west 	= "#row" + y + "cell" + (x - 1);
+
+			neighbors.set('north', document.querySelector(north))
+			neighbors.set('east', document.querySelector(east))
+			neighbors.set('south', document.querySelector(south))
+			neighbors.set('west', document.querySelector(west));
+		}
+
+		const openNeighbors = () => {
+
+			neighbors.forEach((neighbor) => {
+				if (neighbor !== null && neighbor.dataset.state === "unopened") {
+
+					// "Opening" a neighbor.
+
+					// Add it to the open list
+					openList.push(neighbor)
+				
+					// Add the opened class to it
+					neighbor.classList.add("opened")
+
+					// Set the dataset state to be "opened"
+					neighbor.dataset.state = "opened"
+				}
+			})
+		}
+
+		const examineOpenedNeighbors = () => {
+
+			for(let neighbor of openList) {
+
+				// // Set the first neighbor in the list to have the lowest f cost, just to have something to start with
+				// if(neighbor === openList[0]) { lowestFCost = neighbor.dataset.fcost;	nodeWithLowestFCost = neighbor }
+
+				// Check if the iterating neighbor's f-cost is lower than or equal to the current lowest f-cost.
+				if(parseInt(neighbor.dataset.fcost) <= lowestFCost) {
+
+					// If so, set the lowest f-cost number to that of the currently iterating neighbor's f-cost
+					lowestFCost = parseInt(neighbor.dataset.fcost);
+
+					// And set the node of the lowest f-cost variable to this currently iterated neighbor
+					nodeWithLowestFCost = neighbor;
+				}
+			}
+		}

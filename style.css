@@ -47,6 +47,10 @@ td {
 	cursor: 			move;
 }
 
+.closed {
+	background-color: red;
+}
 
-
-
+.opened {
+	background-color: rgb(252, 172, 229);
+}
