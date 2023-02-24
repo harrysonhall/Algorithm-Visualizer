@@ -1,6 +1,6 @@
-* {
-	border: 			solid red 1px;
-}
+/* * {
+	 border: 			solid red 1px; 
+} */
 
 html, body {
 	margin: 			0;
@@ -19,11 +19,12 @@ table, th, td {
 }
 
 td {
-	width: 				30px;
-	height: 			30px;
+	width: 				60px;
+	height: 			60px;
 	background-color: white;
 	padding:			0;
-	text-align: 		center;
+	border: 			solid red 1px;
+	/* text-align: 		center; */
 }
 
 .dragging {
@@ -35,15 +36,15 @@ td {
 
 .start-node-img {
 	transition: 		500ms;
-	max-width: 			75%;
-	max-height: 		75%;
+	max-width: 			30%;
+	max-height: 		30%;
 	cursor: 			move;
 }
 
 .goal-node-img {
 	transition: 		500ms;
-	max-width: 			75%;
-	max-height: 		75%;
+	max-width: 			30%;
+	max-height: 		30%;
 	cursor: 			move;
 }
 
@@ -64,4 +65,8 @@ td {
 
 .wall {
 	background-color: rgb(44, 44, 44);
+}
+
+.costs {
+	font-size: 0.75rem;
 }

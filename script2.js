@@ -1,5 +1,3 @@
-import { PriorityQueue } from "./function.js";
-
 
 const tbody 				= document.querySelector("tbody");
 const table 				= document.querySelector("table");
@@ -85,7 +83,7 @@ const createGrid = () => {
 
 									costs.classList.add("costs")
 
-									// new_cell.append(costs)
+									new_cell.append(costs)
 
 							if(new_cell.id === "row1cell1") new_cell.appendChild(start_node_img);
 							if(new_cell.id === "row5cell5") new_cell.appendChild(goal_node_img);
@@ -232,7 +230,8 @@ visualize_button.addEventListener("click", (e) => {
 
 // Handling of A* Iteration
 
-
+let openList 	= [];
+let closedList 	= [];
 let current 	= null;
 let isPathFound = false;
 
@@ -246,91 +245,128 @@ let neighbors = new Map();
 	neighbors.set('west', null);
 
 
-let openQueue = new PriorityQueue()
-
-let closedQueue = [];
-
-console.log(openQueue.contains(goal_node_img.parentElement))
 const iterate = () => {
-
-	
 
 	if (isPathFound === false) {
 
-		// Given that the current 'Close' the new current
-		if(current !== null) {
+			setStartingCurrent();
 
-			current.classList.remove("current")
+			updateCurrent();
 
-			// Set the new current
-			current = openQueue.dequeue();
+			getNeighbors();
 
+			openNeighbors();
 
-			current.dataset.state = "closed";
+			examineOpenedNeighbors();
 
-			current.classList.remove("opened");
-
-			current.classList.add("closed");
-
-			current.classList.add("current")
-
-			closedQueue.push(current)
-
-			if(current === goal_node_img.parentElement) isPathFound = true;
-		}
-
-		// Declare the current on start
-		if(current === null) {
-
-			current = start_node_img.parentElement;
-
-			current.dataset.state = "closed";
-
-			current.classList.add("closed");
-
-			current.classList.add("current")
-
-			closedQueue.push(current)
-
-		}
-
-		// Get the neighbors from the current
-
-		let x = parseInt(current.dataset.x);	let y = parseInt(current.dataset.y);
-		
-		neighbors.set('north', document.querySelector("#row" + (y - 1) + "cell" + x))
-		neighbors.set('east', document.querySelector("#row" + y + "cell" + (x + 1)))
-		neighbors.set('south', document.querySelector("#row" + (y + 1) + "cell" + x))
-		neighbors.set('west', document.querySelector("#row" + y + "cell" + (x - 1)));
-
-
-		// 'Open' any neighbors not in the opened Queue and add them to it
-
-		for(let neighbor of neighbors) {
-			
-			// Things to check: (in no specific order)
-				// 1. The neighbor is not null
-				// 2. The neighbor is not in the Open Queue already
-				// 3. The neighbor's state is equal to "unopened"
-
-			// If all of these parameters are passed, then add the neighbor to the Open Queue
-
-			if(neighbor[1] !== null && openQueue.contains(neighbor[1]) === false && neighbor[1].dataset.state === "unopened") {
-
-				let fcost = parseInt(neighbor[1].dataset.fcost);
-				openQueue.enqueue([ neighbor[1], fcost ]);
-				neighbor[1].dataset.state = "opened";
-				neighbor[1].classList.add("opened");
-
-			}
-		}
-
-
-
-
-
-			
+			console.log(openList)
 	
 
 	} else console.log('Path has been found!')
 }
+
+		const setStartingCurrent = () => {
+
+			// Setting the start node for 'current'
+			if(current === null) { 
+
+				// Set the initial lowest f-cost
+				lowestFCost = parseInt(start_node_img.parentElement.dataset.fcost)
+
+				// Set the intial lowest f-cost node
+				nodeWithLowestFCost = start_node_img.parentElement;
+
+				// Set the current to the node with the start node img
+				current = nodeWithLowestFCost; 
+
+				// Add it to the open list
+				openList.push(current);
+
+				// Set the dataset state to be "opened"
+				current.dataset.state = "opened"
+			}
+		}
+
+		const updateCurrent = () => {
+
+				// If the previous/old current contains the class 'current' then remove it.
+				if(current.classList.contains("current")) { current.classList.remove("current")}
+
+			// Set the current to the node with the lowest F cost
+			current = nodeWithLowestFCost;
+
+			// Remove it from the open list
+			openList.pop(current)
+
+			// Add it to the closed list
+			closedList.push(current)
+			
+			// Add the closed class to it
+			current.classList.add("closed")
+
+			// Add the current class to it
+			current.classList.add("current")
+
+				// And also remove the opened class if it contains it
+				if(current.classList.contains("opened")) { current.classList.remove("opened")}
+
+			// Set the dataset state to be "closed"
+			current.dataset.state = "closed"
+
+				// If the current is the target, then set isPathFound to true to stop iterations
+				if(current === goal_node_img.parentElement) { isPathFound = true; }
+
+		}
+
+		const getNeighbors = () => {
+
+			let x = parseInt(current.dataset.x);	let y = parseInt(current.dataset.y);
+
+			north 	= "#row" + (y - 1) + "cell" + x;
+			east 	= "#row" + y + "cell" + (x + 1);
+			south	= "#row" + (y + 1) + "cell" + x;
+			west 	= "#row" + y + "cell" + (x - 1);
+
+			neighbors.set('north', document.querySelector(north))
+			neighbors.set('east', document.querySelector(east))
+			neighbors.set('south', document.querySelector(south))
+			neighbors.set('west', document.querySelector(west));
+		}
+
+		const openNeighbors = () => {
+
+			neighbors.forEach((neighbor) => {
+				if (neighbor !== null && neighbor.dataset.state === "unopened") {
+
+					// "Opening" a neighbor.
+
+					// Add it to the open list
+					openList.push(neighbor)
+				
+					// Add the opened class to it
+					neighbor.classList.add("opened")
+
+					// Set the dataset state to be "opened"
+					neighbor.dataset.state = "opened"
+				}
+			})
+		}
+
+		const examineOpenedNeighbors = () => {
+
+			for(let neighbor of openList) {
+
+				// // Set the first neighbor in the list to have the lowest f cost, just to have something to start with
+				// if(neighbor === openList[0]) { lowestFCost = neighbor.dataset.fcost;	nodeWithLowestFCost = neighbor }
+
+				// Check if the iterating neighbor's f-cost is lower than or equal to the current lowest f-cost.
+				if(parseInt(neighbor.dataset.fcost) <= lowestFCost) {
+
+					// If so, set the lowest f-cost number to that of the currently iterating neighbor's f-cost
+					lowestFCost = parseInt(neighbor.dataset.fcost);
+
+					// And set the node of the lowest f-cost variable to this currently iterated neighbor
+					nodeWithLowestFCost = neighbor;
+				}
+			}
+		}
