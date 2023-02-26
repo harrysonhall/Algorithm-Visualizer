@@ -68,5 +68,8 @@ td {
 }
 
 .costs {
-	font-size: 0.75rem;
+	font-size: 0.55rem;
+	width: fit-content;
+	color: grey;
+	pointer-events: inherit;
 }

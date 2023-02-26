@@ -85,7 +85,7 @@ const createGrid = () => {
 
 									costs.classList.add("costs")
 
-									// new_cell.append(costs)
+									new_cell.append(costs)
 
 							if(new_cell.id === "row1cell1") new_cell.appendChild(start_node_img);
 							if(new_cell.id === "row5cell5") new_cell.appendChild(goal_node_img);
@@ -131,7 +131,7 @@ let createOrRemoveWalls = null;
 
 		const createAndRemoveWalls = (e) => {
 
-			if(isPointerDown && e.target.tagName === "TD" && e.target.hasChildNodes() === false && isStartNodeBeingDragged === false && isGoalNodeBeingDragged === false){
+			if(isPointerDown && e.target.tagName === "TD"  && isStartNodeBeingDragged === false && isGoalNodeBeingDragged === false){
 				
 				// Create a Wall
 				if(e.target.classList.contains("wall") === false && createOrRemoveWalls === "create") 	{ e.target.classList.add('wall'); e.target.dataset.state = "wall"; }
@@ -246,16 +246,25 @@ let neighbors = new Map();
 	neighbors.set('west', null);
 
 
-let openQueue = new PriorityQueue()
 
+let openQueue = [];
 let closedQueue = [];
 
-console.log(openQueue.contains(goal_node_img.parentElement))
-const iterate = () => {
 
-	
+function sleep() {
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve('sleep');
+			console.log('slept')
+		}, 150)
+	})
+}
 
-	if (isPathFound === false) {
+
+
+const iterate = async function() {
+
+	while (isPathFound === false) {
 
 		// Given that the current 'Close' the new current
 		if(current !== null) {
@@ -263,8 +272,7 @@ const iterate = () => {
 			current.classList.remove("current")
 
 			// Set the new current
-			current = openQueue.dequeue();
-
+			current = openQueue.shift();
 
 			current.dataset.state = "closed";
 
@@ -314,23 +322,19 @@ const iterate = () => {
 				// 3. The neighbor's state is equal to "unopened"
 
 			// If all of these parameters are passed, then add the neighbor to the Open Queue
+			
+			if(neighbor[1] !== null && openQueue.includes(neighbor[1]) === false && neighbor[1].dataset.state === "unopened") {
 
-			if(neighbor[1] !== null && openQueue.contains(neighbor[1]) === false && neighbor[1].dataset.state === "unopened") {
-
-				let fcost = parseInt(neighbor[1].dataset.fcost);
-				openQueue.enqueue([ neighbor[1], fcost ]);
+				openQueue.push(neighbor[1])
 				neighbor[1].dataset.state = "opened";
 				neighbor[1].classList.add("opened");
 
 			}
 		}
-
-
-
-
-
-			
 	
+	
+		console.log(openQueue)
+		await sleep();
 
-	} else console.log('Path has been found!')
+	} // else console.log('Path has been found!')
 }

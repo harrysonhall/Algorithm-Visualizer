@@ -24,6 +24,33 @@ export function PriorityQueue() {
 		}
 	};
 
+	this.enqueueByHcost = function(element) {
+		if(this.isEmpty()) {
+			collection.push(element)
+		} else {
+			let added = false;
+			for(let i = 0; i < collection.length; i++){
+				if(element[1] < collection[i][1]) {
+					collection.splice(i, 0, element);
+					added = true;
+					break;
+				}
+				if(element[1] === collection[i][1]) {
+					if(element[2] < collection[i][2]) {
+						collection.splice(i, 0, element);
+						added = true;
+						break;
+					}
+				}
+				// console.log(element[2], collection[i][2])
+			}
+			if(!added) {
+				collection.push(element)
+			} 
+		}
+	};
+
+
 	this.dequeue = function() {
 		let value = collection.shift();
 		return value[0];
@@ -58,5 +85,5 @@ export function PriorityQueue() {
 		}
 	}
 
-	
+
 }
