@@ -1,4 +1,8 @@
 import { PriorityQueue } from "./function.js";
+import Node from "./node.js"
+
+
+
 
 
 const tbody 				= document.querySelector("tbody");
@@ -102,7 +106,9 @@ const createGrid = () => {
 createGrid();
 
 
+let myNode = new Node(1,2);
 
+console.log(myNode)
 
 
 

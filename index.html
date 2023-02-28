@@ -9,21 +9,47 @@
 	<link href="style.css" rel="stylesheet">
 	<link href="toggled.css" rel="stylesheet">
 
+
 	<!-- <script src="astar.js" type="module" defer="defer"></script> -->
-	<script src="breadth-first-search.js" type="module" defer></script>
+	<!-- <script src="breadth-first-search.js" type="module" defer></script> -->
+	<script src="main.js" type="module" defer></script>
 	<!-- <script src="script2.js" defer="defer"></script> -->
 	<!-- <script src="astar.js" defer="defer"></script> -->
 </head>
 <body>
 
-	<table id="table">
-		<tbody id="tbody">
-			<tr id="row1"></tr>
-		</tbody>
 
-	</table>
+	<section id="left-section">
+		<div id="grid-sizes">
+			<div id="grid-height">
+				<a>GRID HEIGHT: &nbsp; <output id="grid_height_output">5</output> </a>
+				<input id="grid_height_value" type="range" min="5" max="15" step="1" value="5">
+			</div>
 
-	<button id="visualize-button">Visualize</button>
+			<div id="grid-width">
+				<a>GRID WIDTH: &nbsp; <output id="grid_width_output">5</output> </a>
+				<input id="grid_width_value" type="range" min="5" max="15" step="1" value="5">
+			</div>
+		</div>
+
+
+		<button id="visualize-button">Visualize</button>
+	</section>
+
+
+	<section id="middle-section">
+		<table id="table">
+			<tbody id="tbody">
+				<tr id="row1"></tr>
+			</tbody>
+		</table>
+	</section>
+
+
+	<section id="right-section">
+
+	</section>
+	
 
 </body>
 </html>
