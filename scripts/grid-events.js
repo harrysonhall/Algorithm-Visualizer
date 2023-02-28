@@ -1,3 +1,4 @@
+import { selectedHeight, selectedWidth } from "./selection-events.js";
 
 // Global Variables
 const tbody = document.querySelector("tbody");
@@ -27,21 +28,24 @@ export function initializeGrid() {
 	let amount_of_rows 	= 5;
 	let amount_of_cells = 5;
 
-	grid_height_value.addEventListener("input", (e) => {
 
-		amount_of_rows					= e.target.value;
-		grid_height_output.textContent 	= e.target.value;
+
+	grid_height_value.addEventListener("input", (height) => {
+
+		amount_of_rows					= height.target.value;
+		grid_height_output.textContent 	= height.target.value;
 		createGrid();
+		selectedHeight(height);
 	})
 
-	grid_width_value.addEventListener("input", (e) => {
+	grid_width_value.addEventListener("input", (width) => {
 
-		amount_of_cells					= e.target.value;
-		grid_width_output.textContent	= e.target.value;
+		amount_of_cells					= width.target.value;
+		grid_width_output.textContent	= width.target.value;
 		createGrid();
+		selectedWidth(width);
 	})
 
-	createGrid();
 
 		function createGrid() {
 
@@ -67,6 +71,9 @@ export function initializeGrid() {
 				tbody.appendChild(new_row);
 			}
 		}
+
+
+	createGrid();
 }
 
 
@@ -77,39 +84,42 @@ export function initializeGrid() {
 
 
 
-export function Testing() {
+export function dragAndDrop() {
 
 	let isPointerDown = false;
 	let isItCreateOrRemove = "neither";
 	let pointerDownTarget = null;
 
 
-	table.addEventListener('pointerdown', down => {
+	table.addEventListener('pointerdown', (down) => {
 
 		isPointerDown 		= true;
 
 		down.target.releasePointerCapture(down.pointerId);
-
+		
 		if(down.target.tagName === "IMG") 	pointerDownTarget = down.target;	isItCreateOrRemove = "neither";
 
 		if(down.target.tagName === "TD")	checkCreateOrRemoveWall(down);	createOrRemoveWall(down);
 
 	})
+	
 
+	
 	table.addEventListener('pointerover', (over) => {
 
-		if(over.target.tagName === "TD")		moveStartOrGoalNode(over);		createOrRemoveWall(over);
+		if(over.target.tagName === "TD")		moveStartOrGoalNode(over);		createOrRemoveWall(over);		
 
 	})
 
-	table.addEventListener('pointerup', () => { 
+
+	document.addEventListener('pointerup', (up) => {
 
 		isPointerDown = false;
 
 		if(start_node_img.classList.contains("dragging"))	start_node_img.classList.remove("dragging")
 
 		if(goal_node_img.classList.contains("dragging")) 	goal_node_img.classList.remove("dragging");
-		
+
 	})
 
 
@@ -170,6 +180,8 @@ export function Testing() {
 			//		3. That the intial pointer.down target has no child nodes (aka, that the pointer.down cell, does not contain the Start or Goal Nodes)
 			
 			if(isPointerDown  &&  cell.target.tagName === "TD"  &&  !cell.target.hasChildNodes()) {
+
+				console.log("move id", cell.pointerId);
 
 				switch(isItCreateOrRemove) {
 					

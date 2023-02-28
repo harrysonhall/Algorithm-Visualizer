@@ -20,34 +20,60 @@
 
 
 	<section id="left-section">
-		<div id="grid-sizes">
-			<div id="grid-height">
-				<a>GRID HEIGHT: &nbsp; <output id="grid_height_output">5</output> </a>
-				<input id="grid_height_value" type="range" min="5" max="15" step="1" value="5">
+			<ul id="algorithms">
+				<li id="astar_algorithm" class="algorithms">a* algorithm</li>
+				<li id="breadth_algorithm" class="algorithms">breadth-first search</li>
+			</ul>
+
+
+			<div id="grid-sizes">
+				<div id="grid-height">
+					<a>Grid Height: &nbsp; <output id="grid_height_output">5</output> </a>
+					<input id="grid_height_value" type="range" min="5" max="15" step="1" value="5">
+				</div>
+
+				<div id="grid-width">
+					<a>Grid Width: &nbsp; <output id="grid_width_output">5</output> </a>
+					<input id="grid_width_value" type="range" min="5" max="15" step="1" value="5">
+				</div>
 			</div>
 
-			<div id="grid-width">
-				<a>GRID WIDTH: &nbsp; <output id="grid_width_output">5</output> </a>
-				<input id="grid_width_value" type="range" min="5" max="15" step="1" value="5">
+
+			<div id="speed">
+					<a>Speed: &nbsp; <output id="speed_output">1</output> </a>
+					<input id="speed_value" type="range" min="1" max="10" step="1" value="1">
 			</div>
-		</div>
 
 
-		<button id="visualize-button">Visualize</button>
+			<div id="selected-settings">
+				<a>Selected Algorithm: &nbsp; <a id="selected_algorithm_output">None</a>
+					</a>
+				<a>Selected Grid-Height: &nbsp; <a id="selected_grid_height_output">5</a>
+					</a>
+				<a>Selected Grid-Width: &nbsp; <a id="selected_grid_width_output">5</a>
+					</a>
+				<a>Selected Speed: &nbsp; <a id="selected_speed_output">1</a>
+					</a>
+			</div>
+
+
+			<button id="visualize-button">Visualize</button>
 	</section>
 
 
 	<section id="middle-section">
-		<table id="table">
-			<tbody id="tbody">
-				<tr id="row1"></tr>
-			</tbody>
-		</table>
+			<table id="table">
+				<tbody id="tbody">
+					<tr id="row1"></tr>
+				</tbody>
+			</table>
 	</section>
 
 
 	<section id="right-section">
-
+			<div id="operations">
+				<div id="clear-walls">Clear Walls</div>
+			</div>
 	</section>
 	
 

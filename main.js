@@ -1,7 +1,15 @@
-import { initializeGrid, Testing} from "./scripts/grid-events.js";
+import { initializeGrid, dragAndDrop } from "./scripts/grid-events.js";
+import { selectedAlgorithm, selectedSpeed } from "./scripts/selection-events.js";
+import { clearWalls } from "./scripts/operation-events.js";
+
+
 
 initializeGrid();
 
-// dragNDrop();
+dragAndDrop();
 
-Testing();
+selectedAlgorithm();
+
+selectedSpeed();
+
+clearWalls();

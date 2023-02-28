@@ -1,5 +1,5 @@
-import { PriorityQueue } from "./function.js";
-import Node from "./node.js"
+import { PriorityQueue } from "../function.js";
+import Node from "../node.js"
 
 
 

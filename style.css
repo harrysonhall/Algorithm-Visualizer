@@ -83,9 +83,29 @@ td {
 	width: 15vw;
 }
 
-		input#grid_height_value {
+	#left-section > * {
+		margin-top: 2em;
+		margin-bottom: 2em;
+	}
+
+		ul#algorithms {
+			list-style-type: none;
+			padding-left: 10px;
+		}
+
+			ul#algorithms > *:active {
+				background-color: red;
+			}
+
+		input#grid_height_value, input#grid_width_value {
 			max-width: 15vw;
 		}
+
+		#selected-settings > * {
+			display: block;
+		}
+
+
 
 #middle-section {
 	border: solid 1px blue;
@@ -99,5 +119,13 @@ td {
 
 #right-section {
 	height: 100vh;
-	width: 10vw;
+	width: 15vw;
 }
+
+	#right-section > * {
+		margin-top: 2em;
+		margin-bottom: 2em;
+	}
+		#operations > *:active {
+			background-color: red;
+		}
