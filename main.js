@@ -1,22 +1,25 @@
-import { initializeGrid, dragAndDrop } from "./scripts/grid-events.js";
-import { selectedAlgorithm, selectedSpeed } from "./scripts/selection-events.js";
-import { clearWalls } from "./scripts/operation-events.js";
+// import { initializeGrid, dragAndDrop } from "./scripts/grid-events.js";
+// import { selectedAlgorithm, selectedSpeed } from "./scripts/selection-events.js";
+// import { clearWalls } from "./scripts/operation-events.js";
 
 
 
 
 
-initializeGrid();
+// initializeGrid();
 
-dragAndDrop();
+// dragAndDrop();
 
-selectedAlgorithm();
+// selectedAlgorithm();
 
-selectedSpeed();
+// selectedSpeed();
 
-clearWalls();
+// clearWalls();
 
 
 
-import { iterate } from "./scripts/main/iterate.js";
-iterate();
+// import { iterate } from "./scripts/main/iterate.js";
+// iterate();
+
+import { Initialize } from "./scripts/main/initializer.js";
+Initialize();

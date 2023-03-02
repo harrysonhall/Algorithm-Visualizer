@@ -1,4 +1,4 @@
-import { PriorityQueue } from "../function.js";
+import { PriorityQueue } from "../main/priority-queue.js";
 
 
 const tbody 				= document.querySelector("tbody");

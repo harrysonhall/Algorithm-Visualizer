@@ -1,5 +1,5 @@
 
-import { PriorityQueue } from "../function.js";
+import { PriorityQueue } from "./priority-queue.js";
 import { Sleep } from "./sleep.js";
 
 
