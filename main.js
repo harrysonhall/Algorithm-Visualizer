@@ -4,6 +4,8 @@ import { clearWalls } from "./scripts/operation-events.js";
 
 
 
+
+
 initializeGrid();
 
 dragAndDrop();
@@ -13,3 +15,8 @@ selectedAlgorithm();
 selectedSpeed();
 
 clearWalls();
+
+
+
+import { iterate } from "./scripts/main/iterate.js";
+iterate();

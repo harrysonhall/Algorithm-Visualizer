@@ -1,5 +1,7 @@
 * {
-	 border: 			solid red 1px; 
+	 border: 			solid red 1px;
+	 touch-action: 		manipulation;
+	 overflow: hidden;
 }
 
 html, body {
@@ -12,7 +14,8 @@ body {
 	justify-content: 	space-evenly;
 	align-items: 		center;
 	height: 			100vh;
-	touch-action: none;
+	
+	
 }
 
 table, th, td {
@@ -24,8 +27,8 @@ table, th, td {
 } */
 
 td {
-	width: 				40px;
-	height: 			40px;
+	width: 				20px;
+	height: 			20px;
 	background-color: white;
 	padding:			0;
 	border: 			solid red 1px;

@@ -318,9 +318,9 @@ const iterate = async function() {
 		for(let neighbor of neighbors) {
 			
 			// Things to check: (in no specific order)
-				// 1. The neighbor is not null
-				// 2. The neighbor is not in the Open Queue already
-				// 3. The neighbor's state is equal to "unopened"
+				// 1. The neighbor 'value', is not null
+				// 2. The neighbor 'value', is not in the Open Queue already
+				// 3. The neighbor does not contain any classes (making it an 'unopened' node)
 
 			// If all of these parameters are passed, then add the neighbor to the Open Queue
 
