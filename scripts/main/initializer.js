@@ -1,4 +1,6 @@
 import { AStarAlgorithm } from "./astar-algorithm.js";
+import { BreadthFirstSearchAlgorithm } from "./breadth-first-search-algorithm.js";
+const log							= console.log
 
 
 const start_node_img 	= document.createElement("img");
@@ -20,14 +22,15 @@ const goal_node_img		= document.createElement("img");
 
 
 const algorithms					= document.querySelector('#algorithms')
-const grid_height_value				= document.querySelector("#grid_height_value");
+const grid_height_input				= document.querySelector("#grid_height_input");
 const grid_height_output			= document.querySelector("#grid_height_output");
-const grid_width_value				= document.querySelector("#grid_width_value");
+const grid_width_input				= document.querySelector("#grid_width_input");
 const grid_width_output				= document.querySelector("#grid_width_output");
-const speed_value 					= document.querySelector('#speed_value');
+const speed_input 					= document.querySelector('#speed_input');
 const speed_output 					= document.querySelector('#speed_output');
 
 const clear_walls_button			= document.querySelector('#clear-walls');
+const reset_board_button			= document.querySelector('#reset-board');
 const iterate_button				= document.querySelector("#visualize-button");
 
 const selected_algorithm_output 	= document.querySelector('#selected_algorithm_output');
@@ -35,18 +38,27 @@ const selected_grid_height_output 	= document.querySelector('#selected_grid_heig
 const selected_grid_width_output	= document.querySelector('#selected_grid_width_output');
 const selected_speed_output 		= document.querySelector('#selected_speed_output');
 
+const table_wrapper 				= document.querySelector('#table-wrapper');
 const tbody 						= document.querySelector("tbody");
 const table 						= document.querySelector('table');
 
-const log							= console.log
+let amount_of_rows 			= (table_wrapper.clientHeight - (table_wrapper.clientHeight % 20) - 80) / 20;
+let amount_of_cells 		= (table_wrapper.clientWidth - (table_wrapper.clientWidth % 20) - 80) / 20;
+let selected_algorithm 		= "None";
+let isPointerDown			= false;
+let isItCreateOrRemove		= "neither";
+let pointerDownTarget 		= null;
 
-let amount_of_rows 		= 5;
-let amount_of_cells 	= 5;
-let selected_algorithm 	= "None";
-let isPointerDown		= false;
-let isItCreateOrRemove	= "neither";
-let pointerDownTarget 	= null;
+		// Setting Default Grid Sizes based on Clients Screen Width & Height
+		grid_height_output.textContent 	= amount_of_rows;
+		grid_width_output.textContent 	= amount_of_cells
 
+		grid_height_input.max 			= amount_of_rows;
+		grid_height_input.value			= amount_of_rows;
+
+		grid_width_input.max			= amount_of_cells;
+		grid_width_input.value			= amount_of_cells;
+		
 		
 		function setListeners() {
 
@@ -54,15 +66,15 @@ let pointerDownTarget 	= null;
 				UpdateAlgorithm(algorithm);
 			})
 
-			grid_height_value.addEventListener("input", height => {
+			grid_height_input.addEventListener("input", height => {
 				UpdateGridHeight(height);
 			})
 
-			grid_width_value.addEventListener("input", width => {
+			grid_width_input.addEventListener("input", width => {
 				UpdateGridWidth(width);
 			})
 
-			speed_value.addEventListener("input", speed => {
+			speed_input.addEventListener("input", speed => {
 				UpdateSpeed(speed);
 			})
 
@@ -80,6 +92,10 @@ let pointerDownTarget 	= null;
 
 			clear_walls_button.addEventListener('click', () => {
 				ClearWalls()
+			})
+
+			reset_board_button.addEventListener('click', () => {
+				ResetBoard()
 			})
 
 			iterate_button.addEventListener('click', () => {
@@ -103,6 +119,7 @@ let pointerDownTarget 	= null;
 							new_cell.id			= "row" + row_i + "cell" + cell_i;
 							new_cell.dataset.x	= cell_i;
 							new_cell.dataset.y	= row_i;
+							new_cell.dataset.foundfromnode = null;
 							new_row.appendChild(new_cell);
 
 							if(new_cell.id === "row1cell1") new_cell.appendChild(start_node_img);
@@ -184,6 +201,16 @@ let pointerDownTarget 	= null;
 					if(goal_node_img.classList.contains("dragging")) 	goal_node_img.classList.remove("dragging");
 				}
 
+				function StartAlgorithm() {
+
+					switch(selected_algorithm_output.textContent) {
+			
+						case "A* Search":					AStarAlgorithm();					break;
+
+						case "Breadth-First Search":		BreadthFirstSearchAlgorithm();		break;
+					}
+				}
+
 				function ClearWalls() {
 		
 					document.querySelectorAll('td').forEach((cell) => {
@@ -191,16 +218,6 @@ let pointerDownTarget 	= null;
 						if(cell.classList.contains('wall'))	cell.classList.remove('wall');
 					})
 				}
-
-				function StartAlgorithm() {
-
-					switch(selected_algorithm_output.textContent) {
-			
-						case "A* Search":		AStarAlgorithm();		break;
-					}
-				}
-
-
 				
 
 
@@ -213,7 +230,8 @@ let pointerDownTarget 	= null;
 								
 								if(pointerDownTarget === start_node_img)		{ over.target.appendChild(start_node_img);	start_node_img.classList.add("dragging"); }
 		
-								else if(pointerDownTarget === goal_node_img) 	{ over.target.appendChild(goal_node_img);	goal_node_img.classList.add("dragging"); }			
+								else if(pointerDownTarget === goal_node_img) 	{ over.target.appendChild(goal_node_img);	goal_node_img.classList.add("dragging"); }	
+				
 							}	
 						}
 						
@@ -236,8 +254,6 @@ let pointerDownTarget 	= null;
 							
 							if(isPointerDown  &&  cell.target.tagName === "TD"  &&  !cell.target.hasChildNodes()) {
 				
-								console.log("move id", cell.pointerId);
-				
 								switch(isItCreateOrRemove) {
 									
 									case "remove":		if(cell.target.classList.contains('wall')) cell.target.classList.remove('wall');		break;
@@ -250,10 +266,42 @@ let pointerDownTarget 	= null;
 
 
 
+
 export function Initialize(){
 
 	createGrid();
 
 	setListeners();
 
+}
+
+export function getSleepInMilliseconds() {
+
+	let current_speed = parseInt(speed_input.value);
+	let speed_in_milliseconds;
+
+	switch(current_speed) {
+		case 1:		speed_in_milliseconds = 930;	break;
+		case 2:		speed_in_milliseconds = 830;	break;
+		case 3:		speed_in_milliseconds = 730;	break;
+		case 4:		speed_in_milliseconds = 630;	break;
+		case 5:		speed_in_milliseconds = 530;	break;
+		case 6:		speed_in_milliseconds = 430;	break;
+		case 7:		speed_in_milliseconds = 330;	break;
+		case 8:		speed_in_milliseconds = 230;	break;
+		case 9:		speed_in_milliseconds = 130;	break;
+		case 10:	speed_in_milliseconds = 30;		break;
+	}
+	
+	return speed_in_milliseconds;
+
+}
+
+export function ResetBoard(){
+
+	document.querySelectorAll('td').forEach((cell) => {
+
+		cell.setAttribute('class', '')
+		
+	})
 }

@@ -25,19 +25,19 @@
 			<div id="grid-sizes">
 				<div id="grid-height">
 					<a>Grid Height: &nbsp; <output id="grid_height_output">5</output> </a>
-					<input id="grid_height_value" type="range" min="5" max="25" step="1" value="5">
+					<input id="grid_height_input" type="range" min="5" max="25" step="1" value="5">
 				</div>
 
 				<div id="grid-width">
 					<a>Grid Width: &nbsp; <output id="grid_width_output">5</output> </a>
-					<input id="grid_width_value" type="range" min="5" max="25" step="1" value="5">
+					<input id="grid_width_input" type="range" min="5" max="25" step="1" value="5">
 				</div>
 			</div>
 
 
 			<div id="speed">
-					<a>Speed: &nbsp; <output id="speed_output">1</output> </a>
-					<input id="speed_value" type="range" min="1" max="10" step="1" value="1">
+					<a>Speed: &nbsp; <output id="speed_output">10</output> </a>
+					<input id="speed_input" type="range" min="1" max="10" step="1" value="10">
 			</div>
 
 
@@ -48,8 +48,16 @@
 					</a>
 				<a>Selected Grid-Width: &nbsp; <a id="selected_grid_width_output">5</a>
 					</a>
-				<a>Selected Speed: &nbsp; <a id="selected_speed_output">1</a>
+				<a>Selected Speed: &nbsp; <a id="selected_speed_output">10</a>
 					</a>
+			</div>
+
+
+			<div id="stats">
+				<div id="status">Status: &nbsp; <a id="current-status"></a></div>
+				<div id="nodes-explored">Total # of Nodes Explored: &nbsp; <a id="current-nodes-explored">0</a></div>
+				<div id="nodes-in-path">Total # of Nodes in Path: &nbsp; <a id="current-nodes-in-path">0</a></div>
+				
 			</div>
 
 
@@ -58,17 +66,22 @@
 
 
 	<section id="middle-section">
-			<table id="table">
-				<tbody id="tbody">
-					<tr id="row1"></tr>
-				</tbody>
-			</table>
+			<header id="header"></header>
+
+			<div id="table-wrapper">
+				<table id="table">
+					<tbody id="tbody">
+						<tr id="row1"></tr>
+					</tbody>
+				</table>
+			</div>
 	</section>
 
 
 	<section id="right-section">
 			<div id="operations">
 				<div id="clear-walls">Clear Walls</div>
+				<div id="reset-board">Reset Board</div>
 			</div>
 	</section>
 	

@@ -1,8 +1,7 @@
-export function Sleep() {
+export function Sleep(milliseconds) {
 	return new Promise(resolve => {
 		setTimeout(() => {
 			resolve('sleep');
-			console.log('slept')
-		}, 150)
+		}, milliseconds)
 	})
 }

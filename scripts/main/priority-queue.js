@@ -35,11 +35,56 @@ export function PriorityQueue() {
 					added = true;
 					break;
 				}
-				if(element[1] === collection[i][1]) {
-					if(element[2] < collection[i][2]) {
+				if(element[1] === collection[i][1]) { // in the case that the fcosts are the same
+
+					if(element[2] < collection[i][2]) { //check if one has a greater h-cost
 						collection.splice(i, 0, element);
 						added = true;
 						break;
+					}
+				}
+				// console.log(element[2], collection[i][2])
+			}
+			if(!added) {
+				collection.push(element)
+			} 
+		}
+	};
+
+	this.enqueueByTieBreaker = function(element, tieBreaker, neighborName) {
+		if(this.isEmpty()) {
+			collection.push(element)
+		} else {
+			let added = false;
+			for(let i = 0; i < collection.length; i++){
+				if(element[1] < collection[i][1]) {
+					collection.splice(i, 0, element);
+					added = true;
+					break;
+				}
+				if(element[1] === collection[i][1]) { // in the case that the fcosts are the same
+
+					if(element[2] < collection[i][2]) { //check if one has a greater h-cost
+						collection.splice(i, 0, element);
+						added = true;
+						break;
+					}
+
+					if(element[2] === collection[i][2]){ // in the case that the fcosts AND hcosts are the same
+
+						if(tieBreaker === 0 && neighborName === 'south' || neighborName === 'north') { // if the horizontal costs are currently more expensive
+							console.log(neighborName)
+							collection.splice(i, 0, element);
+							added = true;
+							break;
+						}
+
+						if(tieBreaker === 1 && neighborName === 'east' || neighborName === 'west') { // if the vertical costs are currently more expensive
+							console.log(neighborName)
+							collection.splice(i, 0, element);
+							added = true;
+							break;
+						}
 					}
 				}
 				// console.log(element[2], collection[i][2])
@@ -66,6 +111,10 @@ export function PriorityQueue() {
 
 	this.isEmpty = function() {
 		return (collection.length === 0);
+	}
+
+	this.getLength = function() {
+		return collection.length;
 	}
 
 	this.contains = function(element) {

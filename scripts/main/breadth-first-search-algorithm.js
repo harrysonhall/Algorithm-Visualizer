@@ -1,32 +1,21 @@
 
-import { PriorityQueue } from "./priority-queue.js";
 import { Sleep } from "./sleep.js";
-import { getSleepInMilliseconds, ResetBoard } from "./initializer.js";
+import { getSleepInMilliseconds } from "./initializer.js";
 
 
 let log = console.log
 
 
-export async function AStarAlgorithm() {
+export async function BreadthFirstSearchAlgorithm() {
 
 	document.querySelector('#current-status').textContent = "Running";
-	
+
 	const start_node_img 	= document.querySelector('#start-node');
 	const goal_node_img		= document.querySelector('#goal-node');
 
-	let startNodeCords = { 
-		x: parseInt(start_node_img.parentElement.dataset.x),
-		y: parseInt(start_node_img.parentElement.dataset.y)
-	}
-
-	let goalNodeCords = {
-		x: parseInt(goal_node_img.parentElement.dataset.x),
-		y: parseInt(goal_node_img.parentElement.dataset.y)
-	}
-
 	let isPathFound = false;
 
-	let priorityQueue = new PriorityQueue();
+	let openQueue = [];
 	let closedQueue = [];
 
 	let current = null;
@@ -35,19 +24,19 @@ export async function AStarAlgorithm() {
 		neighbors.set('east', null);
 		neighbors.set('south', null);
 		neighbors.set('west', null);
-	
-	console.log(start_node_img.parentElement)
 
-		// Find the goal node
-		while(current !== goal_node_img.parentElement) {
-			
+
+
+
+		while(!isPathFound) {
+
 
 			if(current !== null) {
 
 				current.classList.remove("current")
 
 				// Set the new current
-				current = priorityQueue.dequeue();
+				current = openQueue.shift();
 
 				current.classList.remove("opened");
 
@@ -59,7 +48,7 @@ export async function AStarAlgorithm() {
 
 				if(current === goal_node_img.parentElement) isPathFound = true;
 			}
-
+			
 
 
 
@@ -73,9 +62,8 @@ export async function AStarAlgorithm() {
 				current.classList.add("current");
 
 				closedQueue.push(current);
-
 			}
-	
+
 
 
 
@@ -90,28 +78,18 @@ export async function AStarAlgorithm() {
 
 
 
-			// Evaluate the neighbors, if they are 'unopened' then calculate their G-Cost, 
-			// H-Cost, and F-Cost and add them to the Priority Queue
+			// Add selected neighbors to the Open Queue
 			for(let neighbor of neighbors) {
-		
+	
 				// Things to check: (in no specific order)
 					// 1. The neighbor 'value', is not null
 					// 2. The neighbor 'value', is not in the Open Queue already
 					// 3. The neighbor does not contain any classes (making it an 'unopened' node)
 	
 				// If all of these parameters are passed, then add the neighbor to the Open Queue
-				if(neighbor[1] !== null && priorityQueue.contains(neighbor[1]) === false && neighbor[1].classList.length === 0) {
+				if(neighbor[1] !== null && openQueue.includes(neighbor[1]) === false && neighbor[1].classList.length === 0) {
 
-					let neighborX = parseInt(neighbor[1].dataset.x);
-					let neighborY = parseInt(neighbor[1].dataset.y);
-	
-					let gcost = (Math.abs(neighborX - startNodeCords.x) + 	Math.abs(neighborY - startNodeCords.y));
-					let hcost =	(Math.abs(neighborX - goalNodeCords.x) 	+ 	Math.abs(neighborY - goalNodeCords.y));
-					let fcost = gcost + hcost;
-
-					let checkerBoardTieBreker = (parseInt(current.dataset.x) + parseInt(current.dataset.y)) % 2
-
-					priorityQueue.enqueueByTieBreaker([neighbor[1], fcost, hcost, gcost], checkerBoardTieBreker, neighbor[0]);
+					openQueue.push(neighbor[1])
 					neighbor[1].classList.add("opened");
 					neighbor[1].dataset.foundfromnode = current.id
 				}
@@ -120,7 +98,6 @@ export async function AStarAlgorithm() {
 
 
 			// Sleep
-			log(getSleepInMilliseconds())
 			await Sleep(getSleepInMilliseconds());
 		}
 
@@ -135,7 +112,7 @@ export async function AStarAlgorithm() {
 
 			if(current.classList.contains('current') ) 	current.classList.remove('current');
 			if(current.classList.contains('closed'))	current.classList.remove('closed');
-			current.classList.add('shortest-path')
+			current.classList.add('shortest-path');
 			console.log('#' + current.dataset.foundfromnode)
 			current = document.querySelector('#' + current.dataset.foundfromnode)
 			await Sleep(getSleepInMilliseconds());
@@ -145,10 +122,9 @@ export async function AStarAlgorithm() {
 
 		// For after the algorithm is completed
 
-		document.querySelector('#current-status').textContent = "Completed"
+		document.querySelector('#current-status').textContent = "Completed";
 
-		document.querySelector('#current-nodes-explored').textContent = priorityQueue.getLength() + closedQueue.length
+		document.querySelector('#current-nodes-explored').textContent = openQueue.length + closedQueue.length;
 
-		document.querySelector('#current-nodes-in-path').textContent = path.length
-
+		document.querySelector('#current-nodes-in-path').textContent = path.length;
 }
