@@ -1,6 +1,8 @@
+import { StartAlgorithm } from "./initializer.js";
+
 const log = console.log;
 
-export function SetupDragNDrop(){
+export function setDragNDrop(){
 
 	const table = document.querySelector('table');
 	const start_node = document.querySelector('#start-node');
@@ -44,14 +46,30 @@ export function SetupDragNDrop(){
 	table.addEventListener('pointerover', over => {
 
 		if(isPointerDown) {
+
+			console.log(over.type)
 		
 			// If the down.target is the Start Node or Goal Node, then we are working with those nodes
 			if(downTarget === start_node || downTarget === goal_node) {
 
-				// Check to see if the over.target is an Empty Cell that isnt a wall or some other node
-				if(over.target.tagName === "TD" && !over.target.hasChildNodes() && over.target.classList.value === "") {
-					over.target.appendChild(downTarget);
+				// We need to check wheter we are recomputing the algorithm too or just moving a node
+				switch(document.querySelector('#current-status').textContent) {
+
+					case "Idle": 
+						// Check to see if the over.target is an Empty Cell that isnt a wall or some other node
+						if(over.target.tagName === "TD" && !over.target.hasChildNodes() && over.target.classList.value === "") {
+							over.target.appendChild(downTarget);
+						}
+							break;
+					case "Completed":
+						if(over.target.tagName === "TD" && !over.target.hasChildNodes() && !over.target.classList.contains('wall')) {
+							over.target.appendChild(downTarget);
+							StartAlgorithm(over)
+						}
+
 				}
+
+				
 			}
 			
 			// If the down.target is an Empty Table Cell, then we are working with those nodes

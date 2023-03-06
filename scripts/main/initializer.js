@@ -1,92 +1,73 @@
+import { GlobalNodes } from "./global-nodes.js";
 import { AStarAlgorithm } from "./astar-algorithm.js";
 import { BreadthFirstSearchAlgorithm } from "./breadth-first-search-algorithm.js";
-import { SetupDragNDrop } from "./drap-n-drop.js";
+import { setDragNDrop } from "./drap-n-drop.js";
 const log = console.log
 
 
-const start_node_img 	= document.createElement("img");
-const goal_node_img		= document.createElement("img");
+const start_node 	= document.createElement("img");
+const goal_node		= document.createElement("img");
 
-	start_node_img.id = "start-node"
-	start_node_img.src = "imgs/start-node.png";
-	start_node_img.draggable = false;
-	start_node_img.classList.add("start-node-img");
+	start_node.id = "start-node"
+	start_node.src = "imgs/start-node.png";
+	start_node.draggable = false;
+	start_node.classList.add("start-node-img");
 	
-	goal_node_img.id = "goal-node"
-	goal_node_img.src = "imgs/goal-node.png";
-	goal_node_img.draggable = false;
-	goal_node_img.classList.add("goal-node-img");
+	goal_node.id = "goal-node"
+	goal_node.src = "imgs/goal-node.png";
+	goal_node.draggable = false;
+	goal_node.classList.add("goal-node-img");
 
 
-
-
-
-
-const algorithms					= document.querySelector('#algorithms')
-const grid_height_input				= document.querySelector("#grid_height_input");
-const grid_height_output			= document.querySelector("#grid_height_output");
-const grid_width_input				= document.querySelector("#grid_width_input");
-const grid_width_output				= document.querySelector("#grid_width_output");
-const speed_input 					= document.querySelector('#speed_input');
-const speed_output 					= document.querySelector('#speed_output');
-
-const clear_walls_button			= document.querySelector('#clear-walls');
-const reset_board_button			= document.querySelector('#reset-board');
-const iterate_button				= document.querySelector("#visualize-button");
-
-const selected_algorithm_output 	= document.querySelector('#selected_algorithm_output');
-const selected_grid_height_output 	= document.querySelector('#selected_grid_height_output');
-const selected_grid_width_output	= document.querySelector('#selected_grid_width_output');
-const selected_speed_output 		= document.querySelector('#selected_speed_output');
-
-const table_wrapper 				= document.querySelector('#table-wrapper');
-const tbody 						= document.querySelector("tbody");
-
-
-let amount_of_rows 			= (table_wrapper.clientHeight - (table_wrapper.clientHeight % 20) - 80) / 20;
-let amount_of_cells 		= (table_wrapper.clientWidth - (table_wrapper.clientWidth % 20) - 80) / 20;
+let amount_of_rows 			= (GlobalNodes.table_wrapper.clientHeight - (GlobalNodes.table_wrapper.clientHeight % 20) - 80) / 20;
+let amount_of_cells 		= (GlobalNodes.table_wrapper.clientWidth - (GlobalNodes.table_wrapper.clientWidth % 20) - 80) / 20;
 let selected_algorithm 		= "None";
 
 
 		// Setting Default Grid Sizes based on Clients Screen Width & Height
-		grid_height_output.textContent 	= amount_of_rows;
-		grid_width_output.textContent 	= amount_of_cells
+		GlobalNodes.grid_height_output.textContent 	= amount_of_rows;
+		GlobalNodes.grid_width_output.textContent 	= amount_of_cells
 
-		grid_height_input.max 			= amount_of_rows;
-		grid_height_input.value			= amount_of_rows;
+		GlobalNodes.grid_height_input.max 			= amount_of_rows;
+		GlobalNodes.grid_height_input.value			= amount_of_rows;
 
-		grid_width_input.max			= amount_of_cells;
-		grid_width_input.value			= amount_of_cells;
+		GlobalNodes.grid_width_input.max			= amount_of_cells;
+		GlobalNodes.grid_width_input.value			= amount_of_cells;
 		
 		
 		function setListeners() {
 
-			algorithms.addEventListener('click', algorithm => {
+			GlobalNodes.algorithms.addEventListener('click', algorithm => {
 				UpdateAlgorithm(algorithm);
 			})
 
-			grid_height_input.addEventListener("input", height => {
+			GlobalNodes.grid_height_input.addEventListener("input", height => {
 				UpdateGridHeight(height);
 			})
 
-			grid_width_input.addEventListener("input", width => {
+			GlobalNodes.grid_width_input.addEventListener("input", width => {
 				UpdateGridWidth(width);
 			})
 
-			speed_input.addEventListener("input", speed => {
+			GlobalNodes.speed_input.addEventListener("input", speed => {
 				UpdateSpeed(speed);
 			})
 
-			clear_walls_button.addEventListener('click', () => {
-				ClearWalls()
+			GlobalNodes.clear_walls_button.addEventListener('click', () => {
+				ClearWalls();
 			})
 
-			reset_board_button.addEventListener('click', () => {
-				ResetBoard()
+			GlobalNodes.clear_algorithm_button.addEventListener('click', () => {
+				ClearAlgorithm();
 			})
 
-			iterate_button.addEventListener('click', () => {
-				StartAlgorithm()
+			GlobalNodes.reset_board_button.addEventListener('click', () => {
+				ResetBoard();
+			})
+
+			GlobalNodes.iterate_button.addEventListener('click', (e) => {
+				log(e.type)
+				StartAlgorithm(e);
 			})
 
 			// Drag And Drop Functionality is handled in a seperate file
@@ -111,8 +92,8 @@ let selected_algorithm 		= "None";
 							new_cell.dataset.foundfromnode = null;
 							new_row.appendChild(new_cell);
 
-							if(new_cell.id === "row1cell1") new_cell.appendChild(start_node_img);
-							if(new_cell.id === "row5cell5") new_cell.appendChild(goal_node_img);
+							if(new_cell.id === "row1cell1") new_cell.appendChild(start_node);
+							if(new_cell.id === "row5cell5") new_cell.appendChild(goal_node);
 
 					}
 				tbody.appendChild(new_row);
@@ -125,8 +106,8 @@ let selected_algorithm 		= "None";
 				function UpdateGridHeight(height) {
 
 					amount_of_rows = height.target.value;
-					grid_height_output.textContent = height.target.value;
-					selected_grid_height_output.textContent = height.target.value;
+					GlobalNodes.grid_height_output.textContent = height.target.value;
+					GlobalNodes.selected_grid_height_output.textContent = height.target.value;
 
 					createGrid();
 				}
@@ -134,16 +115,16 @@ let selected_algorithm 		= "None";
 				function UpdateGridWidth(width) {
 
 					amount_of_cells	= width.target.value;
-					grid_width_output.textContent = width.target.value;
-					selected_grid_width_output.textContent = width.target.value;
+					GlobalNodes.grid_width_output.textContent = width.target.value;
+					GlobalNodes.selected_grid_width_output.textContent = width.target.value;
 
 					createGrid();
 				}
 
 				function UpdateSpeed(speed) {
 
-					speed_output.textContent = speed.target.value
-					selected_speed_output.textContent = speed.target.value
+					GlobalNodes.speed_output.textContent = speed.target.value
+					GlobalNodes.selected_speed_output.textContent = speed.target.value
 				}
 
 				function UpdateAlgorithm(algorithm) {
@@ -152,30 +133,19 @@ let selected_algorithm 		= "None";
 		
 					switch(selected_algorithm) {
 						case document.querySelector('#astar_algorithm'):
-							selected_algorithm_output.textContent = "A* Search";
+							GlobalNodes.selected_algorithm_output.textContent = "A* Search";
 								break;
 		
 						case document.querySelector('#breadth_algorithm'):
-							selected_algorithm_output.textContent = "Breadth-First Search";
+							GlobalNodes.selected_algorithm_output.textContent = "Breadth-First Search";
 								break;
 		
 						case "None":
-							selected_algorithm_output.textContent = "None";
+							GlobalNodes.selected_algorithm_output.textContent = "None";
 								break;
 					}
 				}
 
-			
-
-				function StartAlgorithm() {
-
-					switch(selected_algorithm_output.textContent) {
-			
-						case "A* Search":					AStarAlgorithm();					break;
-
-						case "Breadth-First Search":		BreadthFirstSearchAlgorithm();		break;
-					}
-				}
 
 				function ClearWalls() {
 		
@@ -184,6 +154,8 @@ let selected_algorithm 		= "None";
 						if(cell.classList.contains('wall'))	cell.classList.remove('wall');
 					})
 				}
+
+				
 				
 
 
@@ -196,16 +168,25 @@ export function Initialize(){
 
 	setListeners();
 
-	SetupDragNDrop();
+	setDragNDrop();
 
+}
+
+export function StartAlgorithm(e) {
+
+	switch(GlobalNodes.selected_algorithm_output.textContent) {
+
+		case "A* Search":					AStarAlgorithm(e.type);						break;
+
+		case "Breadth-First Search":		BreadthFirstSearchAlgorithm(e.type);		break;
+	}
 }
 
 export function getSleepInMilliseconds() {
 
-	let current_speed = parseInt(speed_input.value);
 	let speed_in_milliseconds;
 
-	switch(current_speed) {
+	switch(parseInt(speed_input.value)) {
 		case 1:		speed_in_milliseconds = 930;	break;
 		case 2:		speed_in_milliseconds = 830;	break;
 		case 3:		speed_in_milliseconds = 730;	break;
@@ -224,7 +205,7 @@ export function getSleepInMilliseconds() {
 
 export function ResetBoard(){
 
-	document.querySelector('#current-status').textContent = "";
+	document.querySelector('#current-status').textContent = "Idle";
 
 	document.querySelector('#current-nodes-explored').textContent = 0;
 
@@ -234,5 +215,19 @@ export function ResetBoard(){
 
 		cell.setAttribute('class', '')
 		
+	})
+}
+
+export function ClearAlgorithm() {
+
+	document.querySelector('#current-status').textContent = "Idle";
+
+	document.querySelector('#current-nodes-explored').textContent = 0;
+
+	document.querySelector('#current-nodes-in-path').textContent = 0;
+
+	document.querySelectorAll('td').forEach((cell) => {
+		
+		if(!cell.classList.contains('wall')) cell.setAttribute('class', '')
 	})
 }

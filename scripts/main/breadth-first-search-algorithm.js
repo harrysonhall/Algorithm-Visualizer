@@ -1,14 +1,16 @@
 
 import { Sleep } from "./sleep.js";
-import { getSleepInMilliseconds } from "./initializer.js";
+import { getSleepInMilliseconds , ClearAlgorithm} from "./initializer.js";
 
 
 let log = console.log
 
 
-export async function BreadthFirstSearchAlgorithm() {
+export async function BreadthFirstSearchAlgorithm(eventCallerType) {
 
-	document.querySelector('#current-status').textContent = "Running";
+	ClearAlgorithm();
+
+	if(eventCallerType === 'click') document.querySelector('#current-status').textContent = "Running";
 
 	const start_node_img 	= document.querySelector('#start-node');
 	const goal_node_img		= document.querySelector('#goal-node');
@@ -98,7 +100,7 @@ export async function BreadthFirstSearchAlgorithm() {
 
 
 			// Sleep
-			await Sleep(getSleepInMilliseconds());
+			if(eventCallerType === 'click') await Sleep(getSleepInMilliseconds());
 		}
 
 
@@ -110,12 +112,11 @@ export async function BreadthFirstSearchAlgorithm() {
 
 			path.push(current);
 
-			if(current.classList.contains('current') ) 	current.classList.remove('current');
-			if(current.classList.contains('closed'))	current.classList.remove('closed');
-			current.classList.add('shortest-path');
-			console.log('#' + current.dataset.foundfromnode)
-			current = document.querySelector('#' + current.dataset.foundfromnode)
-			await Sleep(getSleepInMilliseconds());
+			current.setAttribute('class','shortest-path');
+			
+			current = document.querySelector('#' + current.dataset.foundfromnode);
+
+			if(eventCallerType === "click") await Sleep(getSleepInMilliseconds());
 		}
 
 	

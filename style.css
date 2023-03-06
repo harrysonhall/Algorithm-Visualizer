@@ -54,17 +54,17 @@ td {
 
 .closed {
 	background-color: red;
-	transition: 1s;
+	/* transition: 1s; */
 }
 
 .opened {
 	background-color: rgb(252, 172, 229);
-	transition: 500ms;
+	/* transition: 500ms; */
 }
 
 .current {
 	outline: grey solid 5px;
-	transition: 500ms;
+	/* transition: 500ms; */
 }
 
 .shortest-path {

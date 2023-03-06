@@ -1,15 +1,19 @@
 
 import { PriorityQueue } from "./priority-queue.js";
 import { Sleep } from "./sleep.js";
-import { getSleepInMilliseconds } from "./initializer.js";
+import { getSleepInMilliseconds, ClearAlgorithm } from "./initializer.js";
 
 
 let log 			= console.log
 
 
-export async function AStarAlgorithm() {
+export async function AStarAlgorithm(eventCallerType) {
 
-	document.querySelector('#current-status').textContent = "Running";
+	ClearAlgorithm();
+
+	if(eventCallerType === "mouse") document.querySelector('#current-status').textContent = "Running";
+
+	console.log(eventCallerType)
 	
 	const start_node_img 	= document.querySelector('#start-node');
 	const goal_node_img		= document.querySelector('#goal-node');
@@ -24,10 +28,10 @@ export async function AStarAlgorithm() {
 		y: parseInt(goal_node_img.parentElement.dataset.y)
 	}
 
-	let isPathFound = false;
-
 	let priorityQueue = new PriorityQueue();
 	let closedQueue = [];
+
+	let isPathFound = false;
 
 	let current = null;
 	let neighbors = new Map();
@@ -120,8 +124,7 @@ export async function AStarAlgorithm() {
 
 
 			// Sleep
-			log(getSleepInMilliseconds())
-			await Sleep(getSleepInMilliseconds());
+			if(eventCallerType === "click") await Sleep(getSleepInMilliseconds());
 		}
 
 
@@ -133,13 +136,11 @@ export async function AStarAlgorithm() {
 
 			path.push(current);
 
-			current.classList.add('shortest-path');
-				if(current.classList.contains('current') ) 	current.classList.remove('current');
-				if(current.classList.contains('closed'))	current.classList.remove('closed');
+			current.setAttribute('class','shortest-path');
 			
 			current = document.querySelector('#' + current.dataset.foundfromnode);
 
-			await Sleep(getSleepInMilliseconds());
+			if(eventCallerType === "click") await Sleep(getSleepInMilliseconds());
 		}
 
 	
