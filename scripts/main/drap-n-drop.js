@@ -12,7 +12,6 @@ export function SetupDragNDrop(){
 
 
 	document.addEventListener('pointerdown', down => {
-
 		down.target.releasePointerCapture(down.pointerId);
 
 		downTarget = down.target
@@ -23,7 +22,6 @@ export function SetupDragNDrop(){
 		// If the down.target is the Start Node or Goal Node, then we are working with those nodes
 		if(down.target === start_node || down.target === goal_node)	{
 			StartGoalNodeOrCells = "StartGoalNode";
-			log('Working with the Start or Goal Node');
 		}
 
 		// If the down.target is an Empty Table Cell, then we are working with those nodes
@@ -54,11 +52,10 @@ export function SetupDragNDrop(){
 				if(over.target.tagName === "TD" && !over.target.hasChildNodes() && over.target.classList.value === "") {
 					over.target.appendChild(downTarget);
 				}
-			
 			}
 			
 			// If the down.target is an Empty Table Cell, then we are working with those nodes
-			else if(downTarget.tagName === "TD" && !downTarget.hasChildNodes()){
+			else if(downTarget.tagName === "TD" && !downTarget.hasChildNodes() && over.target.tagName === "TD" && !over.target.hasChildNodes()){
 
 				switch(createOrRemoveWalls) {
 					case "create":  
@@ -75,7 +72,6 @@ export function SetupDragNDrop(){
 
 	document.addEventListener('pointerup', up => {
 		isPointerDown = false;
-		log('up')
 	})
 
 }

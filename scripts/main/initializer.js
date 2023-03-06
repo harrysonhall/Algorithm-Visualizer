@@ -8,12 +8,12 @@ const start_node_img 	= document.createElement("img");
 const goal_node_img		= document.createElement("img");
 
 	start_node_img.id = "start-node"
-	start_node_img.src = "circle.png";
+	start_node_img.src = "imgs/start-node.png";
 	start_node_img.draggable = false;
 	start_node_img.classList.add("start-node-img");
 	
 	goal_node_img.id = "goal-node"
-	goal_node_img.src = "x.png";
+	goal_node_img.src = "imgs/goal-node.png";
 	goal_node_img.draggable = false;
 	goal_node_img.classList.add("goal-node-img");
 
