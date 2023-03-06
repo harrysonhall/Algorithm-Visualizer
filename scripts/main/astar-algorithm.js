@@ -1,10 +1,10 @@
 
 import { PriorityQueue } from "./priority-queue.js";
 import { Sleep } from "./sleep.js";
-import { getSleepInMilliseconds, ResetBoard } from "./initializer.js";
+import { getSleepInMilliseconds } from "./initializer.js";
 
 
-let log = console.log
+let log 			= console.log
 
 
 export async function AStarAlgorithm() {
@@ -133,11 +133,12 @@ export async function AStarAlgorithm() {
 
 			path.push(current);
 
-			if(current.classList.contains('current') ) 	current.classList.remove('current');
-			if(current.classList.contains('closed'))	current.classList.remove('closed');
-			current.classList.add('shortest-path')
-			console.log('#' + current.dataset.foundfromnode)
-			current = document.querySelector('#' + current.dataset.foundfromnode)
+			current.classList.add('shortest-path');
+				if(current.classList.contains('current') ) 	current.classList.remove('current');
+				if(current.classList.contains('closed'))	current.classList.remove('closed');
+			
+			current = document.querySelector('#' + current.dataset.foundfromnode);
+
 			await Sleep(getSleepInMilliseconds());
 		}
 

@@ -1,6 +1,7 @@
 import { AStarAlgorithm } from "./astar-algorithm.js";
 import { BreadthFirstSearchAlgorithm } from "./breadth-first-search-algorithm.js";
-const log							= console.log
+import { SetupDragNDrop } from "./drap-n-drop.js";
+const log = console.log
 
 
 const start_node_img 	= document.createElement("img");
@@ -40,14 +41,12 @@ const selected_speed_output 		= document.querySelector('#selected_speed_output')
 
 const table_wrapper 				= document.querySelector('#table-wrapper');
 const tbody 						= document.querySelector("tbody");
-const table 						= document.querySelector('table');
+
 
 let amount_of_rows 			= (table_wrapper.clientHeight - (table_wrapper.clientHeight % 20) - 80) / 20;
 let amount_of_cells 		= (table_wrapper.clientWidth - (table_wrapper.clientWidth % 20) - 80) / 20;
 let selected_algorithm 		= "None";
-let isPointerDown			= false;
-let isItCreateOrRemove		= "neither";
-let pointerDownTarget 		= null;
+
 
 		// Setting Default Grid Sizes based on Clients Screen Width & Height
 		grid_height_output.textContent 	= amount_of_rows;
@@ -78,18 +77,6 @@ let pointerDownTarget 		= null;
 				UpdateSpeed(speed);
 			})
 
-			table.addEventListener('pointerdown', down => {
-				UpdatePointerDown(down);
-			})
-
-			table.addEventListener('pointerover', over => {
-				UpdatePointerOver(over);
-			})
-
-			document.addEventListener('pointerup', (up) => {
-				UpdatePointerUp(up);
-			})
-
 			clear_walls_button.addEventListener('click', () => {
 				ClearWalls()
 			})
@@ -101,6 +88,8 @@ let pointerDownTarget 		= null;
 			iterate_button.addEventListener('click', () => {
 				StartAlgorithm()
 			})
+
+			// Drag And Drop Functionality is handled in a seperate file
 
 		}
 
@@ -176,30 +165,7 @@ let pointerDownTarget 		= null;
 					}
 				}
 
-				function UpdatePointerDown(down) {
-
-					isPointerDown 		= true;
-
-					down.target.releasePointerCapture(down.pointerId);
-						
-					if(down.target.tagName === "IMG") 	pointerDownTarget = down.target;	isItCreateOrRemove = "neither";
-					
-					if(down.target.tagName === "TD") 	checkCreateOrRemoveWall(down);		createOrRemoveWall(down);
-				}
-
-				function UpdatePointerOver(over) {
-
-					if(over.target.tagName === "TD")	moveStartOrGoalNode(over);			createOrRemoveWall(over);	
-				}
-
-				function UpdatePointerUp(up) {
-
-					isPointerDown = false;
-				
-					if(start_node_img.classList.contains("dragging"))	start_node_img.classList.remove("dragging")
-				
-					if(goal_node_img.classList.contains("dragging")) 	goal_node_img.classList.remove("dragging");
-				}
+			
 
 				function StartAlgorithm() {
 
@@ -222,49 +188,6 @@ let pointerDownTarget 		= null;
 
 
 
-				
-
-						function moveStartOrGoalNode(over) {
-				
-							if(isPointerDown  &&  !over.target.hasChildNodes()  &&  !over.target.classList.contains('wall')  &&  isItCreateOrRemove === "neither") { 
-								
-								if(pointerDownTarget === start_node_img)		{ over.target.appendChild(start_node_img);	start_node_img.classList.add("dragging"); }
-		
-								else if(pointerDownTarget === goal_node_img) 	{ over.target.appendChild(goal_node_img);	goal_node_img.classList.add("dragging"); }	
-				
-							}	
-						}
-						
-				
-						function checkCreateOrRemoveWall(down) {
-				
-							if(isPointerDown  &&  down.target.tagName === "TD"  &&  !down.target.hasChildNodes()) { 
-				
-								switch(down.target.classList.contains('wall')) {
-				
-									case true:		isItCreateOrRemove = "remove";		break;
-				
-									case false:		isItCreateOrRemove = "create";		break;
-								}
-							}
-						}
-				
-			
-						function createOrRemoveWall(cell) {
-							
-							if(isPointerDown  &&  cell.target.tagName === "TD"  &&  !cell.target.hasChildNodes()) {
-				
-								switch(isItCreateOrRemove) {
-									
-									case "remove":		if(cell.target.classList.contains('wall')) cell.target.classList.remove('wall');		break;
-											
-									case "create":		if(!cell.target.classList.contains('wall'))	cell.target.classList.add('wall');			break;
-								}
-							}
-						}
-
-
-
 
 
 export function Initialize(){
@@ -272,6 +195,8 @@ export function Initialize(){
 	createGrid();
 
 	setListeners();
+
+	SetupDragNDrop();
 
 }
 
@@ -298,6 +223,12 @@ export function getSleepInMilliseconds() {
 }
 
 export function ResetBoard(){
+
+	document.querySelector('#current-status').textContent = "";
+
+	document.querySelector('#current-nodes-explored').textContent = 0;
+
+	document.querySelector('#current-nodes-in-path').textContent = 0;
 
 	document.querySelectorAll('td').forEach((cell) => {
 
