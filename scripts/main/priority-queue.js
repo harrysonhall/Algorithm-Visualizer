@@ -51,7 +51,7 @@ export function PriorityQueue() {
 		}
 	};
 
-	this.enqueueByTieBreaker = function(element, tieBreaker, neighborName) {
+	this.enqueueByAdjacencyTieBreaker = function(element, tieBreaker, neighborName) {
 		if(this.isEmpty()) {
 			collection.push(element)
 		} else {

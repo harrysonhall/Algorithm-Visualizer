@@ -1,6 +1,7 @@
-import { GlobalNodes } from "./global-nodes.js";
-import { AStarAlgorithm } from "./astar-algorithm.js";
+import { GlobalObject } from "./global-object.js";
+import { GreedyBestFirstAlgorithm } from "./greedy-best-first.js";
 import { BreadthFirstSearchAlgorithm } from "./breadth-first-search-algorithm.js";
+import { AStarAlgorithm } from "./astar-algorithm.js";
 import { setDragNDrop } from "./drap-n-drop.js";
 const log = console.log
 
@@ -19,53 +20,53 @@ const goal_node		= document.createElement("img");
 	goal_node.classList.add("goal-node-img");
 
 
-let amount_of_rows 			= (GlobalNodes.table_wrapper.clientHeight - (GlobalNodes.table_wrapper.clientHeight % 20) - 80) / 20;
-let amount_of_cells 		= (GlobalNodes.table_wrapper.clientWidth - (GlobalNodes.table_wrapper.clientWidth % 20) - 80) / 20;
+let amount_of_rows 			= (GlobalObject.table_wrapper.clientHeight - (GlobalObject.table_wrapper.clientHeight % 20) - 80) / 20;
+let amount_of_cells 		= (GlobalObject.table_wrapper.clientWidth - (GlobalObject.table_wrapper.clientWidth % 20) - 80) / 20;
 let selected_algorithm 		= "None";
 
 
 		// Setting Default Grid Sizes based on Clients Screen Width & Height
-		GlobalNodes.grid_height_output.textContent 	= amount_of_rows;
-		GlobalNodes.grid_width_output.textContent 	= amount_of_cells
+		GlobalObject.grid_height_output.textContent 	= amount_of_rows;
+		GlobalObject.grid_width_output.textContent 	= amount_of_cells
 
-		GlobalNodes.grid_height_input.max 			= amount_of_rows;
-		GlobalNodes.grid_height_input.value			= amount_of_rows;
+		GlobalObject.grid_height_input.max 			= amount_of_rows;
+		GlobalObject.grid_height_input.value			= amount_of_rows;
 
-		GlobalNodes.grid_width_input.max			= amount_of_cells;
-		GlobalNodes.grid_width_input.value			= amount_of_cells;
+		GlobalObject.grid_width_input.max			= amount_of_cells;
+		GlobalObject.grid_width_input.value			= amount_of_cells;
 		
 		
 		function setListeners() {
 
-			GlobalNodes.algorithms.addEventListener('click', algorithm => {
+			GlobalObject.algorithms.addEventListener('click', algorithm => {
 				UpdateAlgorithm(algorithm);
 			})
 
-			GlobalNodes.grid_height_input.addEventListener("input", height => {
+			GlobalObject.grid_height_input.addEventListener("input", height => {
 				UpdateGridHeight(height);
 			})
 
-			GlobalNodes.grid_width_input.addEventListener("input", width => {
+			GlobalObject.grid_width_input.addEventListener("input", width => {
 				UpdateGridWidth(width);
 			})
 
-			GlobalNodes.speed_input.addEventListener("input", speed => {
+			GlobalObject.speed_input.addEventListener("input", speed => {
 				UpdateSpeed(speed);
 			})
 
-			GlobalNodes.clear_walls_button.addEventListener('click', () => {
+			GlobalObject.clear_walls_button.addEventListener('click', () => {
 				ClearWalls();
 			})
 
-			GlobalNodes.clear_algorithm_button.addEventListener('click', () => {
+			GlobalObject.clear_algorithm_button.addEventListener('click', () => {
 				ClearAlgorithm();
 			})
 
-			GlobalNodes.reset_board_button.addEventListener('click', () => {
+			GlobalObject.reset_board_button.addEventListener('click', () => {
 				ResetBoard();
 			})
 
-			GlobalNodes.iterate_button.addEventListener('click', (e) => {
+			GlobalObject.iterate_button.addEventListener('click', (e) => {
 				log(e.type)
 				StartAlgorithm(e);
 			})
@@ -106,8 +107,8 @@ let selected_algorithm 		= "None";
 				function UpdateGridHeight(height) {
 
 					amount_of_rows = height.target.value;
-					GlobalNodes.grid_height_output.textContent = height.target.value;
-					GlobalNodes.selected_grid_height_output.textContent = height.target.value;
+					GlobalObject.grid_height_output.textContent = height.target.value;
+					GlobalObject.selected_grid_height_output.textContent = height.target.value;
 
 					createGrid();
 				}
@@ -115,16 +116,16 @@ let selected_algorithm 		= "None";
 				function UpdateGridWidth(width) {
 
 					amount_of_cells	= width.target.value;
-					GlobalNodes.grid_width_output.textContent = width.target.value;
-					GlobalNodes.selected_grid_width_output.textContent = width.target.value;
+					GlobalObject.grid_width_output.textContent = width.target.value;
+					GlobalObject.selected_grid_width_output.textContent = width.target.value;
 
 					createGrid();
 				}
 
 				function UpdateSpeed(speed) {
 
-					GlobalNodes.speed_output.textContent = speed.target.value
-					GlobalNodes.selected_speed_output.textContent = speed.target.value
+					GlobalObject.speed_output.textContent = speed.target.value
+					GlobalObject.selected_speed_output.textContent = speed.target.value
 				}
 
 				function UpdateAlgorithm(algorithm) {
@@ -132,16 +133,20 @@ let selected_algorithm 		= "None";
 					selected_algorithm !== algorithm.target ? selected_algorithm = algorithm.target : selected_algorithm = "None";
 		
 					switch(selected_algorithm) {
-						case document.querySelector('#astar_algorithm'):
-							GlobalNodes.selected_algorithm_output.textContent = "A* Search";
+						case document.querySelector('#greedy_algorithm'):
+							GlobalObject.selected_algorithm_output.textContent = "Greedy Best-First Search";
 								break;
 		
 						case document.querySelector('#breadth_algorithm'):
-							GlobalNodes.selected_algorithm_output.textContent = "Breadth-First Search";
+							GlobalObject.selected_algorithm_output.textContent = "Breadth-First Search";
+								break;
+
+						case document.querySelector('#astar_algorithm'):
+							GlobalObject.selected_algorithm_output.textContent = "A* Algorithm";
 								break;
 		
 						case "None":
-							GlobalNodes.selected_algorithm_output.textContent = "None";
+							GlobalObject.selected_algorithm_output.textContent = "None";
 								break;
 					}
 				}
@@ -174,11 +179,13 @@ export function Initialize(){
 
 export function StartAlgorithm(e) {
 
-	switch(GlobalNodes.selected_algorithm_output.textContent) {
+	switch(GlobalObject.selected_algorithm_output.textContent) {
 
-		case "A* Search":					AStarAlgorithm(e.type);						break;
+		case "Greedy Best-First Search":	GreedyBestFirstAlgorithm(e.type);			break;
 
 		case "Breadth-First Search":		BreadthFirstSearchAlgorithm(e.type);		break;
+
+		case "A* Algorithm":				AStarAlgorithm(e.type);						break;
 	}
 }
 

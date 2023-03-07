@@ -66,7 +66,7 @@ export function setDragNDrop(){
 							over.target.appendChild(downTarget);
 							StartAlgorithm(over)
 						}
-
+							break;
 				}
 
 				

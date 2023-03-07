@@ -1,4 +1,4 @@
-export class GlobalNodes {
+export class GlobalObject {
 
 	static algorithms					= document.querySelector('#algorithms')
 	static grid_height_input			= document.querySelector("#grid_height_input");
