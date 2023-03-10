@@ -9,9 +9,6 @@ let log 			= console.log
 
 export async function AStarAlgorithm(eventCallerType) {
 
-	
-
-
 	ClearAlgorithm();
 
 	if(eventCallerType === "mouse") document.querySelector('#current-status').textContent = "Running";
@@ -95,19 +92,19 @@ export async function AStarAlgorithm(eventCallerType) {
 		switch(diagonalPatternToggler) {
 
 			case true: 
-							for(let i = 0; i < neighbors.length; i++) {
+				for(let i = 0; i < neighbors.length; i++) {
 
-								let j = reverseOrder[i];
-								EvaluateNeighbors(j);
-							}
+					let j = reverseOrder[i];
+					EvaluateNeighbors(j);
+				}
 				break;
 
 			case false:
-							for(let i = 0; i < neighbors.length; i++) {
+				for(let i = 0; i < neighbors.length; i++) {
 
-								let j = normalOrder[i];
-								EvaluateNeighbors(j);
-							}
+					let j = normalOrder[i];
+					EvaluateNeighbors(j);
+				}
 				break;
 		}
 			
@@ -165,10 +162,3 @@ export async function AStarAlgorithm(eventCallerType) {
 		}
 	}
 }
-
-
-
-
-
-
-		
