@@ -1,18 +1,17 @@
-import { GlobalObject } from "./global-object.js";
-import { GreedyBestFirstAlgorithm } from "./greedy-best-first.js"
-import { BreadthFirstSearchAlgorithm } from "./breadth-first-search-algorithm.js";
+import { GlobalObj, ClearWalls, ClearAlgorithm, ResetBoard, SelectCurrentAlgorithm } from "./global.js";
 import { AStarAlgorithm } from "./astar-algorithm.js";
 import { setDragNDrop } from "./drap-n-drop.js";
 const log = console.log
 
 
-let amount_of_rows 			= (GlobalObject.table_wrapper.clientHeight - (GlobalObject.table_wrapper.clientHeight % 20) - 80) / 20;
-let amount_of_cells 		= (GlobalObject.table_wrapper.clientWidth - (GlobalObject.table_wrapper.clientWidth % 20) - 80) / 20;
+const amount_of_columns 	= (GlobalObj.table_wrapper.clientHeight - (GlobalObj.table_wrapper.clientHeight % 20) - 80) / 20;
+const amount_of_rows 		= (GlobalObj.table_wrapper.clientWidth - (GlobalObj.table_wrapper.clientWidth % 20) - 80) / 20;
 let selected_algorithm 		= "None";
 
 
 const start_node 	= document.createElement("img");
 const goal_node		= document.createElement("img");
+
 
 	start_node.id = "start-node"
 	start_node.src = "imgs/start-node.png";
@@ -28,177 +27,210 @@ const goal_node		= document.createElement("img");
 
 		
 		
-	function setListeners() {
 
-		GlobalObject.algorithms.addEventListener('click', algorithm => {
+		GlobalObj.algorithms.addEventListener('click', algorithm => {
 			UpdateAlgorithm(algorithm);
 		})
 
-		GlobalObject.speed_input.addEventListener("input", speed => {
+		GlobalObj.speed_input.addEventListener("input", speed => {
 			UpdateSpeed(speed);
 		})
 
-		GlobalObject.clear_walls_button.addEventListener('click', () => {
+		GlobalObj.clear_walls_button.addEventListener('click', () => {
 			ClearWalls();
 		})
 
-		GlobalObject.clear_algorithm_button.addEventListener('click', () => {
+		GlobalObj.clear_algorithm_button.addEventListener('click', () => {
 			ClearAlgorithm();
 		})
 
-		GlobalObject.reset_board_button.addEventListener('click', () => {
+		GlobalObj.reset_board_button.addEventListener('click', () => {
 			ResetBoard();
 		})
 
-		GlobalObject.iterate_button.addEventListener('click', (e) => {
-			log(e.type)
-			StartAlgorithm(e);
+		GlobalObj.iterate_button.addEventListener('click', (e) => {
+			SelectCurrentAlgorithm(e);
 		})
 
-		// Drag And Drop Functionality is handled in a seperate file
 
-	}
 
-	function createGrid() {
+		
+
+
+	import Node from "./algorithms.js";
+
+	export function createGrid() {
 		
 		document.querySelectorAll("tr").forEach(tr => tr.remove());
 
-		for(let row_i = 1; row_i <= amount_of_rows; row_i++) {
+		for(let row_i = 0; row_i < amount_of_columns; row_i++) {
 
 			let new_row 	= document.createElement("tr");
 				new_row.id 		= "row" + row_i;
+			
 
-				for(let cell_i = 1; cell_i <= amount_of_cells; cell_i++) {
-
+				for(let cell_i = 0; cell_i < amount_of_rows; cell_i++) {
 					let new_cell 		= document.createElement("td");
 						new_cell.id			= "row" + row_i + "cell" + cell_i;
 						new_cell.dataset.x	= cell_i;
 						new_cell.dataset.y	= row_i;
-						new_cell.dataset.foundfromnode = null;
 						new_row.appendChild(new_cell);
 
 						if(new_cell.id === "row1cell1") new_cell.appendChild(start_node);
-						if(new_cell.id === "row5cell5") new_cell.appendChild(goal_node);
-
+						if(new_cell.id === "row5cell5") new_cell.appendChild(goal_node);	
 				}
 			tbody.appendChild(new_row);
+			// break;
 		}
-	}
 
+	
 
-		function UpdateSpeed(speed) {
+		// CREATE THE NODE GRID
+		GlobalObj.node_grid = new Array(amount_of_columns);
 
-			GlobalObject.speed_output.textContent = speed.target.value
-			GlobalObject.selected_speed_output.textContent = speed.target.value
+		for(let cell = 0; cell < amount_of_columns; cell++) {
+
+			GlobalObj.node_grid[cell] = new Array(amount_of_rows)
 		}
-  
-		function UpdateAlgorithm(algorithm) {
-		
-			(selected_algorithm !== algorithm.target) ? selected_algorithm = algorithm.target : selected_algorithm = "None";
 
-			switch(selected_algorithm) {
-				case document.querySelector('#greedy_algorithm'):
-					GlobalObject.selected_algorithm_output.textContent = "Greedy Best-First Search";
-						break;
 
-				case document.querySelector('#breadth_algorithm'):
-					GlobalObject.selected_algorithm_output.textContent = "Breadth-First Search";
-						break;
+		// POPULATE EACH INDEX IN THE NODE GRID WITH A 'NODE' INSTANCE
+		for(let y = 0; y < amount_of_columns; y++) {
 
-				case document.querySelector('#astar_algorithm'):
-					GlobalObject.selected_algorithm_output.textContent = "A* Algorithm";
-						break;
+			for(let x = 0; x < amount_of_rows; x++) {
 
-				case "None":
-					GlobalObject.selected_algorithm_output.textContent = "None";
-						break;
+				GlobalObj.node_grid[y][x] = new Node(document.querySelector('#row' + y + 'cell' + x), x, y)
 			}
 		}
 
 
-		function ClearWalls() {
+		// PRECOMPUTE THE NEIGHBORS 
+		for(let y = 0; y < amount_of_columns; y++) {
 
-			document.querySelectorAll('td').forEach((cell) => {
+			for(let x = 0; x < amount_of_rows; x++) {
 
-				if(cell.classList.contains('wall'))	cell.classList.remove('wall');
-			})
+				GlobalObj.node_grid[y][x].getNeighbors();
+			
+
+			}
 		}
 
-				
-				
+
+		// SET THE START NODE AND TARGET NODE & THEIR CELLTYPE
+		GlobalObj.start_node = GlobalObj.node_grid[1][1];
+		GlobalObj.target_node = GlobalObj.node_grid[5][5];
+
+		GlobalObj.node_grid[1][1].cellType = "StartOrTargetNode";
+		GlobalObj.node_grid[5][5].cellType = "StartOrTargetNode";
 
 
 
 
+		// FOR TESTING
+		tick();
 
-export function Initialize(){
-
-	createGrid();
-
-	setListeners();
-
-	setDragNDrop();
-
-}
-
-export function StartAlgorithm(e) {
-
-	switch(GlobalObject.selected_algorithm_output.textContent) {
-
-		case "Greedy Best-First Search":	GreedyBestFirstAlgorithm(e.type);			break;
-
-		case "Breadth-First Search":		BreadthFirstSearchAlgorithm(e.type);		break;
-
-		case "A* Algorithm":				AStarAlgorithm(e.type);						break;
 	}
-}
 
-export function getSleepInMilliseconds() {
 
-	let speed_in_milliseconds;
 
-	switch(parseInt(speed_input.value)) {
-		case 1:		speed_in_milliseconds = 930;	break;
-		case 2:		speed_in_milliseconds = 830;	break;
-		case 3:		speed_in_milliseconds = 730;	break;
-		case 4:		speed_in_milliseconds = 630;	break;
-		case 5:		speed_in_milliseconds = 530;	break;
-		case 6:		speed_in_milliseconds = 430;	break;
-		case 7:		speed_in_milliseconds = 330;	break;
-		case 8:		speed_in_milliseconds = 230;	break;
-		case 9:		speed_in_milliseconds = 130;	break;
-		case 10:	speed_in_milliseconds = 30;		break;
-	}
+			// For Testing Purposes - Testing how long it takes to iterate through the node grid and check a property
+			function test() {
+
+				const startTime = Date.now()
+				let counter = 0;
+
+					for(let y = 0; y < amount_of_columns; y++) {
+						for(let x = 0; x < amount_of_rows; x++) {
+
+							if(!GlobalObj.node_grid[y][x].isCellTypeSet) {
+								// console.log(GlobalObj.node_grid[y][x].cellType);
+								switch(GlobalObj.node_grid[y][x].cellType) {
+									
+									case "Open": 				
+										GlobalObj.node_grid[y][x].node.setAttribute('class', '');				
+										GlobalObj.node_grid[y][x].isCellTypeSet = true;		
+										break;
+
+									case "OpenSet":				
+										GlobalObj.node_grid[y][x].node.setAttribute('class', 'opened');			
+										GlobalObj.node_grid[y][x].isCellTypeSet = true;	
+										break;
+
+									case "ClosedSet": 			
+										GlobalObj.node_grid[y][x].node.setAttribute('class', 'closed');			
+										GlobalObj.node_grid[y][x].isCellTypeSet = true;	
+										break;
+
+									case "Wall": 				
+										GlobalObj.node_grid[y][x].node.setAttribute('class', 'wall');			
+										GlobalObj.node_grid[y][x].isCellTypeSet = true;		
+										break;
+
+									case "StartOrTargetNode": 	
+										GlobalObj.node_grid[y][x].node.setAttribute('class', '');				
+										GlobalObj.node_grid[y][x].isCellTypeSet = true;			
+										break;
+
+									case "Path": 				
+										GlobalObj.node_grid[y][x].node.setAttribute('class', 'shortest-path');	
+										GlobalObj.node_grid[y][x].isCellTypeSet = true;	
+										break;
+								}
+							}
+
+						}
+					}
+					const endTime = Date.now()
+					// console.log((endTime - startTime) + "ms")
+			}
+			
+
+			const tick = () => {
+
+				test();
+
+
+				requestAnimationFrame(tick)
+			}
+
 	
-	return speed_in_milliseconds;
 
-}
 
-export function ResetBoard(){
+	
 
-	document.querySelector('#current-status').textContent = "Idle";
 
-	document.querySelector('#current-nodes-explored').textContent = 0;
 
-	document.querySelector('#current-nodes-in-path').textContent = 0;
 
-	document.querySelectorAll('td').forEach((cell) => {
+	function UpdateSpeed(speed) {
 
-		cell.setAttribute('class', '')
-		
-	})
-}
+		GlobalObj.speed_output.textContent = speed.target.value
+		GlobalObj.selected_speed_output.textContent = speed.target.value
+	}
 
-export function ClearAlgorithm() {
+	function UpdateAlgorithm(algorithm) {
+	
+		(selected_algorithm !== algorithm.target) ? selected_algorithm = algorithm.target : selected_algorithm = "None";
 
-	document.querySelector('#current-status').textContent = "Idle";
+		switch(selected_algorithm) {
 
-	document.querySelector('#current-nodes-explored').textContent = 0;
 
-	document.querySelector('#current-nodes-in-path').textContent = 0;
+			case document.querySelector('#greedy_algorithm'):
+				GlobalObj.selected_algorithm_output.textContent = "Greedy Best-First Search";
+					break;
 
-	document.querySelectorAll('td').forEach((cell) => {
-		
-		if(!cell.classList.contains('wall')) cell.setAttribute('class', '')
-	})
-}
+
+			case document.querySelector('#breadth_algorithm'):
+				GlobalObj.selected_algorithm_output.textContent = "Breadth-First Search";
+					break;
+
+
+			case document.querySelector('#astar_algorithm'):
+				GlobalObj.selected_algorithm_output.textContent = "A* Algorithm";
+					break;
+
+
+			case "None":
+				GlobalObj.selected_algorithm_output.textContent = "None";
+					break;
+		}
+	}

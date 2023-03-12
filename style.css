@@ -1,154 +1,155 @@
 * {
-	 /* border: 			solid red 1px; */
-	 /* touch-action: 		manipulation; */
-	 overflow: hidden;
+	/* border: 			solid red 1px; */
+   touch-action: 		manipulation;
+   overflow:		 	hidden;
 }
 
 html, body {
-	margin: 			0;
-	padding: 			0;
+   margin: 			0;
+   padding: 			0;
 }
 
 body {
-	display: 			flex;
-	justify-content: 	space-evenly;
-	align-items: 		center;
-	height: 			100vh;
+   display: 			flex;
+   justify-content: 	space-evenly;
+   align-items: 		center;
+   height: 			100vh;
 	
-	
+
+   
 }
 
 table, th, td {
-	border-collapse: 	collapse;
+   border-collapse: 	collapse;
 }
 
 /* tbody{
-	pointer-events: none;
+   pointer-events: none;
 } */
 
 td {
-	width: 				20px;
-	height: 			20px;
-	background-color: rgb(187, 187, 187);
-	padding:			0;
-	border: 			solid white 1px;
-	text-align: 		center;
+   width: 				20px;
+   height: 			20px;
+   background-color: rgb(187, 187, 187);
+   padding:			0;
+   border: 			solid white 1px;
+   text-align: 		center;
 }
 
 .dragging {
-	opacity: 			0.5;
-	cursor: 			pointer;
-	width: 				50%;
-	height: 			50%;
+   opacity: 			0.5;
+   cursor: 			pointer;
+   width: 				50%;
+   height: 			50%;
 }
 
 .start-node-img, .goal-node-img {
-	transition: 		500ms;
-	max-width: 			70%;
-	max-height: 		70%;
-	cursor: 			move;
-	user-select: 		none;
+   transition: 		500ms;
+   max-width: 			70%;
+   max-height: 		70%;
+   cursor: 			move;
+   user-select: 		none;
 }
 
 
 
 .closed {
-	background-color: red;
-	/* transition: 1s; */
+   background-color: red;
+   /* transition: 1s; */
 }
 
 .opened {
-	background-color: rgb(252, 172, 229);
-	/* transition: 500ms; */
+   background-color: rgb(252, 172, 229);
+   /* transition: 500ms; */
 }
 
 .current {
-	outline: grey solid 5px;
-	/* transition: 500ms; */
+   outline: grey solid 5px;
+   /* transition: 500ms; */
 }
 
 .shortest-path {
-	background-color: rgb(0, 123, 205);
+   background-color: rgb(0, 123, 205);
 }
 
 .wall {
-	background-color: rgb(44, 44, 44);
+   background-color: rgb(44, 44, 44);
 }
 
 .costs {
-	font-size: 0.55rem;
-	width: fit-content;
-	color: grey;
-	pointer-events: inherit;
+   font-size: 0.55rem;
+   width: fit-content;
+   color: grey;
+   pointer-events: inherit;
 }
 
 
 
 
 #left-section {
-	height: 100vh;
-	width: 15vw;
-	max-width: 175px;
+   height: 100vh;
+   width: 15vw;
+   max-width: 175px;
 }
 
-	#left-section > * {
-		margin-top: 2em;
-		margin-bottom: 2em;
-	}
+   #left-section > * {
+	   margin-top: 2em;
+	   margin-bottom: 2em;
+   }
 
-		ul#algorithms {
-			list-style-type: none;
-			padding-left: 10px;
-		}
+	   ul#algorithms {
+		   list-style-type: none;
+		   padding-left: 10px;
+	   }
 
-			ul#algorithms > *:active {
-				background-color: red;
-			}
+		   ul#algorithms > *:active {
+			   background-color: red;
+		   }
 
-		input#grid_height_value, input#grid_width_value {
-			max-width: 15vw;
-		}
+	   input#grid_height_value, input#grid_width_value {
+		   max-width: 15vw;
+	   }
 
-		#selected-settings > * {
-			display: block;
-		}
+	   #selected-settings > * {
+		   display: block;
+	   }
 
 
 
 #middle-section {
-	border: solid 1px blue;
-	height: 100%;
-	width: 80%;
+   border: solid 1px blue;
+   height: 100%;
+   width: 80%;
 
-	display: flex;
-    flex-direction: column;
-    align-items: center;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
 }
 
-	#header {
-		height: 15vh;
-		width: 100%;
-	}
+   #header {
+	   height: 15vh;
+	   width: 100%;
+   }
 
-	#table-wrapper {
-		border: 2px solid orange;
-		display: flex;
-		flex-grow: 1;
-		justify-content: center;
-		align-items: center;
-		width: 100%;
-	}
+   #table-wrapper {
+	   border: 2px solid orange;
+	   display: flex;
+	   flex-grow: 1;
+	   justify-content: center;
+	   align-items: center;
+	   width: 100%;
+   }
 
 #right-section {
-	height: 100vh;
-	width: 15vw;
-	max-width: 175px;
+   height: 100vh;
+   width: 15vw;
+   max-width: 175px;
 }
 
-	#right-section > * {
-		margin-top: 2em;
-		margin-bottom: 2em;
-	}
-		#operations > *:active {
-			background-color: red;
-		}
+   #right-section > * {
+	   margin-top: 2em;
+	   margin-bottom: 2em;
+   }
+	   #operations > *:active {
+		   background-color: red;
+	   }

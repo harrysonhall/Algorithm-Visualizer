@@ -1,4 +1,4 @@
-import { StartAlgorithm } from "./initializer.js";
+import { GlobalObj, SelectCurrentAlgorithm } from "./global.js";
 
 const log = console.log;
 
@@ -14,6 +14,7 @@ export function setDragNDrop(){
 
 
 	document.addEventListener('pointerdown', down => {
+
 		down.target.releasePointerCapture(down.pointerId);
 
 		downTarget = down.target
@@ -21,68 +22,107 @@ export function setDragNDrop(){
 
 		// We need to check what we are working with first. The Start or Goal Node? or Empty Cells?
 
-		// If the down.target is the Start Node or Goal Node, then we are working with those nodes
+		// This is for if the down.target is a Start Node or Goal Node
 		if(down.target === start_node || down.target === goal_node)	{
 			StartGoalNodeOrCells = "StartGoalNode";
 		}
 
-		// If the down.target is an Empty Table Cell, then we are working with those nodes
+		// This is for if the down.target is an Empty Table Cell
 		else if(down.target.tagName === "TD" && !down.target.hasChildNodes()) {
+
+			let x = Number(down.target.dataset.x);
+			let y = Number(down.target.dataset.y);
 
 			// Check if the cell is wall or not
 			switch(down.target.classList.value) {
 				case "": 	
-					createOrRemoveWalls = "create";
-					down.target.classList.add('wall');
-						break;
+						createOrRemoveWalls = "create";
+						down.target.classList.add('wall');
+						GlobalObj.node_grid[y][x].state = "blocked";
+				break;
+
+
 				case "wall":
-					createOrRemoveWalls = "remove";
-					down.target.classList.remove('wall');
-						break;
+						createOrRemoveWalls = "remove";
+						down.target.classList.remove('wall');
+						GlobalObj.node_grid[y][x].state = "unblocked";
+				break;
 			}
 		}
 	})
 
+	
+
 	table.addEventListener('pointerover', over => {
 
-		if(isPointerDown) {
-
-			console.log(over.type)
 		
-			// If the down.target is the Start Node or Goal Node, then we are working with those nodes
+
+		if(isPointerDown) {
+			GlobalObj.startTime = Date.now();
+		
+			///////////////////////////////////////////////////
+			// WHEN DOING SOMETHING WITH START OR GOAL NODES //
+			///////////////////////////////////////////////////
 			if(downTarget === start_node || downTarget === goal_node) {
 
-				// We need to check wheter we are recomputing the algorithm too or just moving a node
 				switch(document.querySelector('#current-status').textContent) {
 
+					// This is for if the "Visualize" Button is 
+					// clicked and we are not instantly computing the algorithm.
 					case "Idle": 
-						// Check to see if the over.target is an Empty Cell that isnt a wall or some other node
-						if(over.target.tagName === "TD" && !over.target.hasChildNodes() && over.target.classList.value === "") {
-							over.target.appendChild(downTarget);
-						}
-							break;
-					case "Completed":
-						if(over.target.tagName === "TD" && !over.target.hasChildNodes() && !over.target.classList.contains('wall')) {
-							over.target.appendChild(downTarget);
-							StartAlgorithm(over)
-						}
-							break;
+							if(over.target.tagName === "TD" && !over.target.hasChildNodes() && over.target.classList.value === "") {
+								// This visually moves the start or goal node
+								over.target.appendChild(downTarget);
+								// This updates the start_node for the algorithms
+								let x = Number(over.target.dataset.x);
+								let y = Number(over.target.dataset.y);
+								downTarget === start_node ? GlobalObj.start_node = GlobalObj.node_grid[y][x] : GlobalObj.target_node = GlobalObj.node_grid[y][x];
+							}
+					break;
+
+
+					// This is for if the algorithm alreeady ran and we are 
+					// in real time 'updating' the algorithm as the start or goal node is moved around.
+					case "Completed": 
+							if(over.target.tagName === "TD" && !over.target.hasChildNodes() && !over.target.classList.contains('wall')) {
+								// This visually moves the start or goal node
+								over.target.appendChild(downTarget);
+								// This updates the start_node for the algorithms
+								let x = Number(over.target.dataset.x);
+								let y = Number(over.target.dataset.y);
+								downTarget === start_node ? GlobalObj.start_node = GlobalObj.node_grid[y][x] : GlobalObj.target_node = GlobalObj.node_grid[y][x]
+								// This is a call to run the algorithm again
+								SelectCurrentAlgorithm(over);
+							}
+					break;
 				}
 
 				
 			}
-			
-			// If the down.target is an Empty Table Cell, then we are working with those nodes
+
+			////////////////////////////////////////////////
+			// WHEN DOING SOMETHING WITH JUST TABLE CELLS //
+			////////////////////////////////////////////////
 			else if(downTarget.tagName === "TD" && !downTarget.hasChildNodes() && over.target.tagName === "TD" && !over.target.hasChildNodes()){
+
+				let x = Number(over.target.dataset.x);
+				let y = Number(over.target.dataset.y);
 
 				switch(createOrRemoveWalls) {
 					case "create":  
-						if(over.target.classList.value === "")	over.target.classList.add('wall');
-							break;
+							if(over.target.classList.value === "")	{
+								over.target.classList.add('wall');
+								GlobalObj.node_grid[y][x].state = "blocked";
+							}
+					break;
 
+					
 					case "remove": 
-						if(over.target.classList.value === "wall")	over.target.classList.remove('wall');
-							break;
+							if(over.target.classList.value === "wall")	{
+								over.target.classList.remove('wall');
+								GlobalObj.node_grid[y][x].state = "unblocked";
+							}
+					break;
 				}
 			}
 		}
