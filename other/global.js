@@ -102,11 +102,17 @@ export function ResetBoard(){
 
 	document.querySelector('#current-nodes-in-path').textContent = 0;
 
-	document.querySelectorAll('td').forEach((cell) => {
+	GlobalObj.priorityQueue.resetCellType();
 
-		cell.setAttribute('class', '')
-		
-	})
+	GlobalObj.closedQueue.resetCellType();
+
+	GlobalObj.finalPath.resetCellType();
+
+	GlobalObj.priorityQueue = new PriorityQueue();
+
+	GlobalObj.closedQueue = new ClosedQueue();
+
+	GlobalObj.finalPath = new FinalPath();
 }
 
 

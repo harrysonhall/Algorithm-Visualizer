@@ -133,9 +133,11 @@ export async function AStar(eventCallerType) {
 				} else {
 
 					neighbor.set_hcost(Math.sqrt(Math.pow(neighbor.x - GlobalObj.target_node.x, 2) + Math.pow(neighbor.y - GlobalObj.target_node.y, 2)));
+					// neighbor.set_hcost(Math.abs(neighbor.x - GlobalObj.target_node.x) + Math.abs(neighbor.y - GlobalObj.target_node.y))
 					neighbor.set_gcost(tentativeGCost);
 					neighbor.previousNode = current;
 					openQueue.enqueue([neighbor, neighbor.fcost]);
+					// openQueue.enqueueByHcost([neighbor, neighbor.fcost, neighbor.hcost]);
 				}
 			}
 		}

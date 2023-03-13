@@ -27,12 +27,14 @@ export function PriorityQueue() {
 	};
 
 	this.enqueueByHcost = function (element) {
+		element[0].cellType = "OpenSet";
+		element[0].isCellTypeSet = false;
 		if (this.isEmpty()) {
 			collection.push(element);
 		} else {
 			let added = false;
 			for (let i = 0; i < collection.length; i++) {
-				if (element[1] < collection[i][1]) {
+				if (element[1] <= collection[i][1]) {
 					collection.splice(i, 0, element);
 					added = true;
 					break;
